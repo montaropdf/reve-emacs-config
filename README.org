@@ -1,0 +1,11 @@
+#+TITLE: My personal configuration for the Emacs editor
+
+I am trying a new approach using Cask and configuration modules or configuration units (not yet sure about the final name).
+
+The aim is to be able, using Cask and an =init.el= file, to select what will be part of the configuration, on a per machine, per user basis.
+
+With the Fedora VM I use on my work computer, I don't need the same packages and settings than on my private machine.
+
+For exemple, I don't need ElFeed or IRC at work, and I don't need packages related to puppet and some tools, specific to my job, at home.
+
+Cask will help manage dependencies, especially from VCS repositories. and the =init.el= file will help select the configuration units to be part of the configuration.
