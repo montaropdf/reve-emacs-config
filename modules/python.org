@@ -1,0 +1,34 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Python language configuration
+
+* Python
+  :PROPERTIES:
+  :ID:       7c290139-1396-49fa-b2fd-66a46cffb590
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (setq py-python-command "python3")
+    (setq python-shell-interpreter "python3")
+    (setq-default indent-tabs-mode nil)
+
+    (use-package elpy
+      :ensure t
+      :config (elpy-enable))
+
+    (setq python-shell-interpreter "python3"
+          ;; python-shell-interpreter-args "console --simple-prompt"
+          ;; python-shell-prompt-detect-failure-warning nil
+          )
+    ;; (add-to-list 'python-shell-completion-native-disabled-interpreters
+    ;;              "jupyter")
+  #+END_SRC
+* EIN and PYNT
+  :PROPERTIES:
+  :ID:       cf2a7bf9-7b43-477f-8a60-629842453094
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    ;; (use-package pynt
+    ;;   :ensure t)
+
+    ;; (use-package ein
+    ;;   :ensure t)
+  #+END_SRC

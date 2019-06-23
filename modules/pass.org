@@ -1,0 +1,21 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Password manager configurtion
+
+* Password-store
+  :PROPERTIES:
+  :ID:       16e0cbb6-b0e0-4cf6-ac0c-2dae69b1b932
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package pass
+      :ensure t
+      :config
+      (setq password-store-password-length 15))
+
+    (use-package ivy-pass
+      :ensure t
+      :after (ivy pass))
+
+    (use-package password-store
+      :ensure t
+      :after pass)
+  #+END_SRC

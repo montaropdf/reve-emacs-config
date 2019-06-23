@@ -1,0 +1,243 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Org Mode configuration
+
+* Org packages
+  :PROPERTIES:
+  :ID:       2f108e83-6794-4e24-a747-4d3e0bb5056c
+  :END:
+  This is the main package I use with emacs these days.
+
+  It allows to organize varous aspects of my life, like appointment, and tasks to do.
+** Main package
+   :PROPERTIES:
+   :ID:       9f712028-d1fd-43d1-a867-c862f7585d91
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     ;;; Load org mode early to ensure that the orgmode ELPA version gets picked up, not the
+     ;;; shipped version
+     ;; (use-package org-plus-contrib
+     ;;   :pin org)
+     (use-package org
+       :ensure org-plus-contrib
+       :pin org
+       :mode (("\\.org$" . org-mode)
+	      ("\\.org_archive$" . org-mode))
+       :init (progn
+	       (setq org-log-done 'time)
+	       (setq org-agenda-span 'day)
+	       (setq org-agenda-sticky t))
+       :bind (("C-c l" . org-store-link)
+	      ;; ("C-c a" . org-agenda)
+	      ("C-c b" . org-iswitchb)
+	      ;; ("<f12>" . org-agenda)
+	      ("C-c c" . org-capture))
+       :config (progn
+		 ;; (add-to-list 'org-modules "org-habit")
+		 (use-package ob-python
+		   :defer t
+		   :config
+		   (progn
+		     (setq org-babel-python-command "python3")))
+		 (use-package ox-org
+		   :defer t)
+		 (setq org-file-apps
+		       (append '(("\\.pdf\\'" . "evince %s") ("\\.odt\\'" . "oowriter %s"))
+			       org-file-apps))
+		 (add-to-list
+		  'org-src-lang-modes '("plantuml" . plantuml))
+
+		 (setq org-plantuml-jar-path "/usr/share/java/plantuml.jar")
+
+		 (require 'org-habit)
+		 (require 'org-id)
+		 (require 'org-protocol)
+		 ))
+
+     (define-key org-mode-map (kbd "~") 'skeleton-pair-insert-maybe)
+     (define-key org-mode-map (kbd "=") 'skeleton-pair-insert-maybe)
+     (define-key org-mode-map (kbd "*") 'skeleton-pair-insert-maybe)
+     (define-key org-mode-map (kbd "+") 'skeleton-pair-insert-maybe)
+  #+END_SRC
+
+** Org Bullets
+   :PROPERTIES:
+   :ID:       aceb994a-ef1e-40ea-a8e3-3b3f8b626233
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-bullets
+       :ensure t
+       :after org
+       :config
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+   #+END_SRC
+
+** Org AC
+   :PROPERTIES:
+   :ID:       5ca8076f-24ae-49fd-a016-e9f02398494c
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-ac
+       :ensure t
+       :after org
+       :init (progn
+	       (require 'org-ac)
+	       (org-ac/config-default)))
+   #+END_SRC
+
+   #+RESULTS:
+
+** Org Super Agenda
+   :PROPERTIES:
+   :ID:       4cf59f3c-98b3-4e80-811d-62e8356d981c
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-super-agenda
+       :ensure t
+       :after org
+       :config
+       (org-super-agenda-mode 1))
+   #+END_SRC
+** Concept mapping
+   :PROPERTIES:
+   :ID:       ef2d93c5-6582-4b97-8173-dbd625a2d1a6
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-brain
+       :ensure t
+       :after org
+       :init
+       (setq org-brain-path "~/org")
+       :config
+       (setq org-id-track-globally t)
+       (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+       ;; (push '("b" "Brain" plain (function org-brain-goto-end)
+       ;;         "* %i%?" :empty-lines 1)
+       ;;       org-capture-templates)
+       (setq org-brain-visualize-default-choices 'root)
+       (setq org-brain-title-max-length 20))
+
+     (use-package org-mind-map
+       :ensure t
+       :after (org ox-org)
+       ;; :after (require 'ox-org)
+       :config (progn
+                 (org-mind-map-display 'frame)
+                 (org-mind-map-default-graph-attribs '(("autosize" . "false")
+                                                       ("size" . "9,12")
+                                                       ("resolution" . "100")
+                                                       ("nodesep" . "0.75")
+                                                       ("overlap" . "false")
+                                                       ("splines" . "curved")
+                                                       ("rankdir" . "LR")))
+                 (org-mind-map-dot-output ("png")))
+       )
+   #+END_SRC
+
+   #+RESULTS:
+** Org Timeline
+   :PROPERTIES:
+   :ID:       e8d8f731-ba91-4da4-a5d0-696513fe92c5
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-timeline
+       :ensure t
+       :after org
+       :config (add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+** Org Board
+   :PROPERTIES:
+   :ID:       d7612dab-55d2-44a9-8648-8f2a3db97859
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-board
+       :ensure t
+       :after org
+       )
+
+     (global-set-key (kbd "C-c o") org-board-keymap)
+   #+END_SRC
+
+   #+RESULTS:
+   : (keymap (79 . org-attach-reveal-in-emacs) (120 . org-board-run-after-archive-function) (99 . org-board-cancel) (51 . org-board-diff3) (100 . org-board-diff) (111 . org-board-open) (107 . org-board-delete-all) (110 . org-board-new) (114 . org-board-archive-dry-run) (97 . org-board-archive))
+** Org Alert
+   :PROPERTIES:
+   :ID:       1b2653b4-0d44-4b80-bd63-4b7719290e7d
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-alert
+       :ensure t
+       :after org
+       :init (progn (setq org-alert-interval 3600)
+		    (setq alert-default-style 'libnotify))
+       :config (org-alert-enable))
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+** Org Contacts
+   :PROPERTIES:
+   :ID:       7baed027-8b2d-458b-ace9-988d5cdca171
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-contacts
+       :ensure nil
+       :after org
+       :defer 30)
+   #+END_SRC
+
+   #+RESULTS:
+
+** Org Journal
+   :PROPERTIES:
+   :ID:       8aea1c9b-1e21-4d18-8e6f-0bc2564fbb89
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-journal
+       :ensure t
+       :after org
+       )
+   #+END_SRC   
+
+   #+RESULTS:
+
+** Export back-ends
+   :PROPERTIES:
+   :ID:       b4653187-d15f-49e2-a5b6-283167fffc1e
+   :END:
+*** Reveal.js
+    :PROPERTIES:
+    :ID:       030d445f-b9de-4f71-a8fd-e2138aff6682
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package ox-reveal
+        :ensure t
+        :config
+        (require 'ox-reveal)
+        (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+        (setq org-reveal-mathjax t))
+
+      (use-package htmlize
+        :ensure t)
+    #+END_SRC
+*** MediaWiki
+    :PROPERTIES:
+    :ID:       e409ebbf-125b-4ffa-9ddf-ec155afde625
+    :END:
+    #+begin_src emacs-lisp
+      (use-package ox-mediawiki
+        :ensure t)
+    #+end_src
+** Site specific configuration
+   :PROPERTIES:
+   :ID:       a546a436-0f22-49de-87bd-39c31659b7c7
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (with-eval-after-load 'org
+       (load-if-exists "~/.personal/org-config.el")
+       )
+   #+END_SRC

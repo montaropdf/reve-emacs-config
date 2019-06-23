@@ -1,0 +1,21 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Common Lisp support configuration
+
+* Common Lisp
+  :PROPERTIES:
+  :ID:       082c983f-04d7-45cc-a6fb-61057c76b741
+  :END:
+#+begin_src emacs-lisp
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+  (use-package slime
+    :ensure t
+    :defer t)
+
+  (use-package slime-company
+    :ensure t
+    :after slime
+    :defer t)
+
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+#+end_src

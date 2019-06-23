@@ -1,0 +1,12 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Configuration of the try package
+
+* Try package
+  :PROPERTIES:
+  :ID:       c7accdba-8ced-47c3-8b8d-f1e888aa7018
+  :END:
+  This package allows to load other packages to try them during the current Emacs session.
+  #+BEGIN_SRC emacs-lisp
+    (use-package try
+	    :ensure t)
+  #+END_SRC

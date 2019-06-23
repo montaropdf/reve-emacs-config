@@ -1,0 +1,305 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Pre-Configuration
+
+* Extra directories with ELisp packages
+  :PROPERTIES:
+  :ID:       219bde98-9c4f-4693-9b3f-895521aab5ca
+  :END:
+
+  I use some extra packages not in ELPA or MELPA, so I need to tell Emacs where they are located.
+
+  =reve-helpers= is a home made package with a few functions to ease some recurring tasks.
+  #+BEGIN_SRC emacs-lisp
+    ;; (add-to-list 'load-path "~/git_src/emacsmirror/bookmark-plus")
+    ;; (add-to-list 'load-path "~/git_src/derbeutlin/filetags.el")
+    ;; (add-to-list 'load-path "~/git_src/derbeutlin/date2name.el")
+    ;; (add-to-list 'load-path "~/codes/3rdparty/skeletor.el")
+    ;; (add-to-list 'load-path "~/codes/reve-elisp/reve-helpers.el")
+  #+END_SRC
+
+* Personal customs
+  :PROPERTIES:
+  :ID:       b7e0ddc9-1c88-4930-a14d-6b9b59b4bf0e
+  :END:
+
+  Below, I set the values of Emacs variables to suits my needs.
+  #+BEGIN_SRC emacs-lisp
+    (setq inhibit-startup-message t)
+
+    (defun load-if-exists (f)
+      "Load the file if it exist and is readable."
+
+      (when (file-readable-p f) (load-file f)))
+
+    (setq bookmark-default-file "~/.personal/bookmarks")
+
+    (setq custom-file "~/.personal/customs.el")
+    (load-if-exists custom-file)
+
+    (show-paren-mode 1)
+    (tool-bar-mode -1)
+    (blink-cursor-mode 0)
+    (global-visual-line-mode nil)
+    (pending-delete-mode t)
+    (abbrev-mode t)
+
+    (global-set-key (kbd "<f5>") 'revert-buffer)
+
+    (setq calendar-day-name-array ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
+    (setq calendar-month-name-array ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Août" "Septembre" "Octobre" "Novembre" "Decembre"])
+    (setq calendar-time-display-form (quote (24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))))
+    (setq calendar-week-start-day 1)
+    (setq case-fold-search t)
+    (setq column-number-mode t)
+    (setq current-language-environment "UTF-8")
+    (setq default-input-method "latin-1-prefix")
+    (setq directory-abbrev-alist nil)
+    (setq display-time-24hr-format t)
+    (setq display-time-day-and-date t)
+    (display-time-mode t)
+    (setq fill-column 100)
+    (global-font-lock-mode t)
+    (global-hl-line-mode t)
+    (setq indent-tabs-mode nil)
+    (setq indicate-buffer-boundaries (quote left))
+    (setq indicate-empty-lines t)
+    (setq mark-even-if-inactive t)
+    (setq pc-selection-mode nil)
+    (recentf-mode t)
+    (setq require-final-newline t)
+    (setq safe-local-variable-values (quote ((ispell-dictionary . "english"))))
+    (setq save-abbrevs t)
+    (setq scroll-down-aggressively 0.0)
+    (setq scroll-up-aggressively 0.0)
+    (setq show-trailing-whitespace t)
+    (setq size-indication-mode t)
+    (setq transient-mark-mode t)
+    (setq calendar-date-style 'iso)
+
+    (which-function-mode t)
+    (auto-revert-mode t)
+    (auto-fill-mode t)
+
+    (put 'downcase-region 'disabled nil)
+    (put 'upcase-region 'disabled nil)
+
+    ;;;;;;;;;;;;;;;; parenthèses, accolades et brackets ;;;;;;
+    (setq skeleton-pair t)
+    (global-set-key "[" 'skeleton-pair-insert-maybe)
+    (global-set-key "{" 'skeleton-pair-insert-maybe)
+    (global-set-key "(" 'skeleton-pair-insert-maybe)
+    (global-set-key "\"" 'skeleton-pair-insert-maybe)
+    (global-set-key "'" 'skeleton-pair-insert-maybe)
+
+    ;; The call to this personal script must be done at the beginning of
+    ;; the initialisation.  It is meant to contain personnal configuration
+    ;; that must be evaluated before most of the configuration.
+    (load-if-exists "~/.personal/site-pre-config.el")
+
+    (require 'date2name)
+    (require 'filetags)
+
+    (setq filetags-delimiter "--")
+
+
+    (use-package unicode-enbox
+      :ensure t)
+#+END_SRC
+
+  #+RESULTS:
+
+* Various packages
+  :PROPERTIES:
+  :ID:       ef8328fc-f20e-454e-8925-4bd6e7b18469
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package s
+      :ensure t)
+
+    (use-package hungry-delete
+      :ensure t
+      :config (global-hungry-delete-mode))
+
+    (use-package aggressive-indent
+      :ensure t
+      :config (global-aggressive-indent-mode 1))
+
+    (use-package expand-region
+      :ensure t
+      :bind ("C-=" . er/expand-region))
+
+    (use-package iedit
+      :ensure t)
+
+    ;; Copied from this location:
+    ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+    (defun narrow-or-widen-dwim (p)
+      "Widen if buffer is narrowed, narrow-dwim otherwise.
+    Dwim means: region, org-src-block, org-subtree, or
+    defun, whichever applies first. Narrowing to
+    org-src-block actually calls `org-edit-src-code'.
+
+    With prefix P, don't widen, just narrow even if buffer
+    is already narrowed."
+      (interactive "P")
+      (declare (interactive-only))
+      (cond ((and (buffer-narrowed-p) (not p)) (widen))
+            ((region-active-p)
+             (narrow-to-region (region-beginning)
+                               (region-end)))
+            ((derived-mode-p 'org-mode)
+             ;; `org-edit-src-code' is not a real narrowing
+             ;; command. Remove this first conditional if
+             ;; you don't want it.
+             (cond ((ignore-errors (org-edit-src-code) t)
+                    (delete-other-windows))
+                   ((ignore-errors (org-narrow-to-block) t))
+                   (t (org-narrow-to-subtree))))
+            ((derived-mode-p 'latex-mode)
+             (LaTeX-narrow-to-environment))
+            (t (narrow-to-defun))))
+
+    ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
+    ;; This line actually replaces Emacs' entire narrowing
+    ;; keymap, that's how much I like this command. Only
+    ;; copy it if that's what you want.
+    (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+    (add-hook 'LaTeX-mode-hook
+              (lambda ()
+                (define-key LaTeX-mode-map "\C-xn"
+                  nil)))
+  #+END_SRC
+* Regex
+  :PROPERTIES:
+  :ID:       5bae40db-94b4-4215-981a-6b09fdffdb86
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package pcre2el
+      :ensure t
+      :config (pcre-mode))
+  #+END_SRC
+* Undo Tree
+  :PROPERTIES:
+  :ID:       50d0bb3a-a98e-4ec1-9546-45f1949adf45
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package undo-tree
+      :ensure t
+      :init
+      (global-undo-tree-mode))
+  #+END_SRC
+* IBuffer
+  :PROPERTIES:
+  :ID:       cf0f5324-4a74-4eef-8658-ff59cb27af0f
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "C-x C-b") 'ibuffer)
+    (setq ibuffer-saved-filter-groups
+          (quote (("default"
+                   ("dired" (mode . dired-mode))
+                   ("org" (and (not (name . "^init.emacs.org$"))
+                               (or
+                                (name . "^.*org$")
+                                (name . "^.*org<.+$")
+                                (name . "\\*Org Agenda.*\\*$"))))
+                   ("IRC" (or (mode . circe-channel-mode) (mode . circe-server-mode)))
+                   ;; ("web" (or (mode . web-mode) (mode . js2-mode)))
+                   ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+                   ("mu4e" (or
+
+                            (mode . mu4e-compose-mode)
+                            (name . "\*mu4e\*")
+                            ))
+                   ("programming" (or
+                                   (mode . python-mode)
+                                   (mode . emacs-lisp)
+                                   (name . "init.emacs.org")))
+                   ("emacs" (or
+                             (name . "^\\*scratch\\*$")
+                             (name . "^\\*Messages\\*$")))
+                   ))))
+    (add-hook 'ibuffer-mode-hook
+              (lambda ()
+                (ibuffer-auto-mode 1)
+                (ibuffer-switch-to-saved-filter-groups "default")))
+
+    ;; Don't show filter groups if there are no buffers in that group
+    (setq ibuffer-show-empty-filter-groups nil)
+  #+END_SRC
+* Unicode configuration
+  :PROPERTIES:
+  :ID:       a2b85d8c-0492-42ef-9c00-cc2ed2a9cfaa
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package unicode-emoticons
+      :ensure t)
+
+    ;; (use-package unicode-enbox
+    ;;   :ensure t)
+
+    (use-package unicode-escape
+      :ensure t)
+
+    (use-package unicode-fonts
+      :ensure t
+      :config (unicode-fonts-setup))
+
+    (use-package unicode-input
+      :ensure t)
+
+    (use-package unicode-progress-reporter
+      :ensure t
+      :config (unicode-progress-reporter-setup))
+
+    (use-package unicode-whitespace
+      :ensure t
+      :config (unicode-whitespace-setup 'subdued-faces))
+
+    (use-package unidecode
+      :ensure t)
+  #+END_SRC
+* Crux
+  :PROPERTIES:
+  :ID:       b5b892e4-5910-4807-829a-ed3f15c0d119
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package crux
+      :ensure t
+      :bind (("<f6> o" . crux-open-with)
+	     ("C-a" . crux-move-beginning-of-line)))
+  #+END_SRC
+* Shell
+  :PROPERTIES:
+  :ID:       7b9e74a1-1973-4bf7-afd9-d2d23aa8e91a
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package shx
+      :ensure t)
+  #+END_SRC
+* Various package to try
+  :PROPERTIES:
+  :ID:       32742df6-56e8-4549-a0fb-05532e21c38b
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    ;; (use-package parsec
+    ;;   :ensure t)
+
+    ;; (use-package x509-mode
+    ;;   :ensure t)
+
+    ;; (use-package sauron
+    ;;   :ensure t)
+    ;; (use-package workgroups
+    ;;   :ensure t)
+
+    ;; (setq wg-prefix-key (kbd "C-c a"))
+
+    (use-package persp-mode
+      :ensure t)
+
+    (with-eval-after-load "persp-mode-autoloads"
+      (setq wg-morph-on nil)
+      ;; switch off the animation of restoring window configuration
+      (setq persp-autokill-buffer-on-remove 'kill-weak)
+      (add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
+  #+END_SRC

@@ -1,0 +1,129 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Projectile package configuration
+
+* Projectile
+  :PROPERTIES:
+  :ID:       723fba61-4f03-42ca-bb43-f73b589aa7d1
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package projectile
+      :ensure t)
+
+    (setq projectile-known-projects-file "~/.personal/projectile-bookmarks.eld")
+
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  #+END_SRC
+
+* Magit
+  :PROPERTIES:
+  :ID:       74a14e41-c573-4ecb-bd10-4516c5d53943
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :init
+      (progn
+	(bind-key "C-x g" 'magit-status)
+	))
+
+    (use-package git-gutter
+      :ensure t
+      :init
+      (global-git-gutter-mode +1))
+
+    (global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
+
+    (use-package git-timemachine
+      :ensure t)
+
+    ;; (use-package gitconfig
+    ;;   :ensure t)
+
+    (use-package git-auto-commit-mode
+      :ensure t)
+
+    (use-package git-blamed
+      :ensure t)
+
+    (use-package gitconfig-mode
+      :ensure t)
+
+    (use-package gited
+      :ensure t)
+
+
+    (add-to-list 'load-path "~/git_src/nlamirault/emacs-gitlab")
+    (require 'gitlab)
+
+    ;; (setq gitlab-host "https://10.0.0.4"
+    ;;       gitlab-token-id "a3uzUsXG7fcytP8HUxkA")
+
+    ;; (use-package gitlab
+    ;;   :ensure t
+    ;;   :config (setq gitlab-host "https://10.0.0.4"
+    ;; 		gitlab-token-id "a3uzUsXG7fcytP8HUxkA"))
+
+    (use-package gitlab-ci-mode
+      :ensure t)
+
+    (use-package gitlab-ci-mode-flycheck
+      :ensure t)
+
+    (use-package ivy-gitlab
+      :ensure t
+      :after (ivy gitlab))
+
+
+
+    (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
+					  :hint nil)
+      "
+    Git gutter:
+      _j_: next hunk        _s_tage hunk     _q_uit
+      _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
+      ^ ^                   _p_opup hunk
+      _h_: first hunk
+      _l_: last hunk        set start _R_evision
+    "
+      ("j" git-gutter:next-hunk)
+      ("k" git-gutter:previous-hunk)
+      ("h" (progn (goto-char (point-min))
+		  (git-gutter:next-hunk 1)))
+      ("l" (progn (goto-char (point-min))
+		  (git-gutter:previous-hunk 1)))
+      ("s" git-gutter:stage-hunk)
+      ("r" git-gutter:revert-hunk)
+      ("p" git-gutter:popup-hunk)
+      ("R" git-gutter:set-start-revision)
+      ("q" nil :color blue)
+      ("Q" (progn (git-gutter-mode -1)
+		  ;; git-gutter-fringe doesn't seem to
+		  ;; clear the markup right away
+		  (sit-for 0.1)
+		  (git-gutter:clear))
+       :color blue))
+  #+END_SRC
+
+* Skeletor
+  :PROPERTIES:
+  :ID:       41c20fc4-7a1c-4f9d-934c-d278a98c3cea
+  :END:
+  I use my fork of the skeletor package as I have contributed to it.
+
+  Normally I could revert back to the version provided in MELPA.
+#+BEGIN_SRC emacs-lisp
+  (require 'skeletor)
+
+
+  ;; (use-package skeletor
+  ;;   :ensure t
+  ;;   :config (setq skeletor-user-directory "~/.personal/skeletons"))
+
+  ;; (skeletor-define-template "python3-library" "Python3-project")
+
+  ;; (skeletor-define-template "elpy-python3-library" "Python3 project for ElPy")
+
+  (load-if-exists "~/.personal/skeletor-config.el")
+#+END_SRC

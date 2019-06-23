@@ -1,0 +1,22 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: PlantUML configuration
+
+* PlantUML
+  :PROPERTIES:
+  :ID:       3ae73601-870d-4c7a-8a59-6723aad30bb3
+  :END:
+  This package allows to design UML diagrams using a DSL language close to the DOT syntax.
+  #+begin_src emacs-lisp
+    (use-package plantuml-mode
+      :ensure t
+      :defer t
+      :config ((setq plantuml-jar-path "/usr/share/java/plantuml.jar")
+      ;; Enable plantuml-mode for PlantUML files
+      (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))))
+
+    (use-package flycheck-plantuml
+      :ensure flycheck
+      :defer t
+      :after (flycheck plantuml-mode)
+      :config (flycheck-plantuml-setup))
+  #+end_src

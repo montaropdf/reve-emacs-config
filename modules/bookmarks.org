@@ -1,0 +1,15 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Emacs initialisation via org-babel
+
+* Bookmark+
+  :PROPERTIES:
+  :ID:       a7f127c9-81f2-4cd0-a79d-b8531367cc7a
+  :END:
+
+  This package add some functionnalities to the build-in bookmark package.
+
+  I am not yet settled on which one is the most appropriate to manage bookmarks between the =bookmarks= package and =org-mode=.
+  #+BEGIN_SRC emacs-lisp
+    (require 'bookmark+)
+
+  #+END_SRC

@@ -1,0 +1,36 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: PDF support configuration
+
+* PDF tools
+  :PROPERTIES:
+  :ID:       d416152f-e988-44fc-afa2-e2fa9f084fd9
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package pdf-tools
+      :ensure t)
+    (use-package org-pdfview
+      :ensure t)
+
+    (require 'pdf-tools)
+    (require 'org-pdfview)
+  #+END_SRC
+* EPub reader
+  :PROPERTIES:
+  :ID:       c9ed21bb-6295-4a51-b026-e0c5ea4ffad2
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package nov
+      :ensure t
+      :mode (("\\.epub$" . nov-mode)))
+  #+END_SRC
+* CSV support
+  :PROPERTIES:
+  :ID:       1f6c8cb8-aa18-4403-b4c2-f079842a6552
+  :END:
+  #+begin_src emacs-lisp
+    (use-package csv-mode
+      :ensure t
+      :defer t
+      :config (add-to-list 'csv-separators ";")
+      (add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode)))
+  #+end_src

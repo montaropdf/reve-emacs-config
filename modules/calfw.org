@@ -1,0 +1,20 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Calfw configuration
+
+* Calendaring
+  :PROPERTIES:
+  :ID:       f98961b9-1b14-4e7b-92b5-c6942d5350c6
+  :END:
+  This package allow to display a calendar similar to the google or exchange calendar.
+
+  The second package allows integration with Org mode.
+  #+begin_src emacs-lisp
+    (use-package calfw
+      :ensure t
+      :defer 30)
+
+    (use-package calfw-org
+      :ensure t
+      :after (org calfw)
+      :defer 30)
+  #+end_src
