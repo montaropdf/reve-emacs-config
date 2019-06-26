@@ -15,6 +15,7 @@
 (setq default-directory (f-full (getenv "HOME")))
 
 (defun load-local (file)
+  "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
   (load (f-expand file user-emacs-directory)))
 
 (dolist module (f-files "modules" ))
