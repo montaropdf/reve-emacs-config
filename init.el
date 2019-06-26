@@ -14,22 +14,17 @@
 
 (setq default-directory (f-full (getenv "HOME")))
 
+(setq config-unit-location (f-expand "codes/reve-elisp/reve-econfig/modules" default-directory))
+(setq config-file-name "local.config.el")
+(setq config-file-location (f-expand config-file-name user-emacs-directory))
+
 (defun load-local (file)
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
   (load (f-expand file user-emacs-directory)))
 
-(let ((unit-list (f-files "modules")))
-  (progn
+(unless (f-exists? config-file-location)
+  (let ((unit-list (f-files "modules")))
     (dolist (unit unit-list)
-      (org-babel-tangle-file unit (f-expand "local.config.el" user-emacs-directory)))
-    (load-local "local.config.el")))
+      (org-babel-tangle-file unit config-file-location))))
 
-
-
-
-
-
-;; (load-local "mods")
-
-;; (dolist elisp-mod reve:mods
-;;         (load-local elisp-mod))
+(load-local config-file-name)
