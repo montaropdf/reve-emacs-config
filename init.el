@@ -32,7 +32,7 @@
 (defun tangle-or-insert (config-unit)
   "Check the extension of CONFIG-UNIT and decide if it must be tangled or inserted in the final configuration file."
   (cond ((f-ext? config-unit "org")
-         (org-babel-tangle-file pre-config-unit config-file-location))
+         (org-babel-tangle-file config-unit config-file-location))
         ((f-ext? config-unit "el")
          (let ((config-unit-buffer (find-file-noselect config-unit)))
            (progn
