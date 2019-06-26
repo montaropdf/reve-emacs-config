@@ -20,7 +20,6 @@
   "Name of the final configuration file to load.")
 (defvar config-file-location (f-expand config-file-name user-emacs-directory)
   "Location of the final configuration file to load.")
-
 (defvar pre-config-unit (f-join config-unit-location "pre-config.org")
   "Full path of the pre-config configuration unit.")
 (defvar post-config-unit (f-join config-unit-location "post-config.org")
