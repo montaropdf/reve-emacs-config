@@ -31,7 +31,7 @@
 
 ;; * Functions
 (defun load-local (file)
-  "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
+  "Load FILE assuming it is located in the path stored in REVE:TARGET-DIRECTORY."
   (load (f-expand file reve:target-directory)))
 
 (defun tangle-or-insert (config-unit)
