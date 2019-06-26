@@ -37,25 +37,25 @@
 (defun tangle-or-insert (config-unit)
   "Check the extension of CONFIG-UNIT and decide if it must be tangled or inserted in the final configuration file."
   (cond ((f-ext? config-unit "org")
-         (org-babel-tangle-file config-unit config-file-location))
+         (org-babel-tangle-file config-unit reve:config-file-location))
         ((f-ext? config-unit "el")
          (let ((config-unit-buffer (find-file-noselect config-unit)))
            (progn
              (with-current-buffer config-unit-buffer
-               (append-to-file (point-min) (point-max) config-file-location))
+               (append-to-file (point-min) (point-max) reve:config-file-location))
              (kill-buffer config-unit-buffer))))
         (t
          (message "Unknown extension types."))))
 
 ;; * Main Process
-(unless (f-exists? config-file-location)
+(unless (f-exists? reve:config-file-location)
   (progn
-    (when (f-exists? pre-config-unit)
-      (tangle-or-insert pre-config-unit))
-    (dolist (unit (f-files config-unit-location))
+    (when (f-exists? reve:pre-config-unit)
+      (tangle-or-insert reve:pre-config-unit))
+    (dolist (unit (f-files reve:config-unit-location))
       (unless (or (eq unit "pre-config.org") (eq unit "post-config.org"))
         (tangle-or-insert unit)))
-    (when (f-exists? post-config-unit)
-      (tangle-or-insert post-config-unit))))
+    (when (f-exists? reve:post-config-unit)
+      (tangle-or-insert reve:post-config-unit))))
 
 (load-local config-file-name)
