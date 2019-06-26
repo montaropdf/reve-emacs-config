@@ -26,7 +26,11 @@
   (load (f-expand file user-emacs-directory)))
 
 (unless (f-exists? config-file-location)
-  (dolist (unit (f-files config-unit-location))
-    (org-babel-tangle-file unit config-file-location)))
+  (progn
+    (org-babel-tangle-file (f-join config-unit-location "pre-config.org") config-file-location)
+    (dolist (unit (f-files config-unit-location))
+      (unless (or (eq unit "pre-config.org") (eq unit "post-config.org"))
+        (org-babel-tangle-file unit config-file-location)))
+    (org-babel-tangle-file (f-join config-unit-location "post-config.org") config-file-location)))
 
 (load-local config-file-name)
