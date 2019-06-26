@@ -22,17 +22,17 @@
   "Location of the configuration units to be processed to create the final configuration file.")
 (defvar reve:config-file-name "local.config.el"
   "Name of the final configuration file to load.")
-(defvar reve:config-file-location (f-expand config-file-name user-emacs-directory)
+(defvar reve:config-file-location (f-expand reve:config-file-name reve:target-directory)
   "Location of the final configuration file to load.")
-(defvar reve:pre-config-unit (f-join config-unit-location "pre-config.org")
+(defvar reve:pre-config-unit (f-join reve:config-unit-location "pre-config.org")
   "Full path of the pre-config configuration unit.")
-(defvar reve:post-config-unit (f-join config-unit-location "post-config.org")
+(defvar reve:post-config-unit (f-join reve:config-unit-location "post-config.org")
   "Full path of the post-config configuration unit.")
 
 ;; * Functions
 (defun load-local (file)
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
-  (load (f-expand file user-emacs-directory)))
+  (load (f-expand file reve:target-directory)))
 
 (defun tangle-or-insert (config-unit)
   "Check the extension of CONFIG-UNIT and decide if it must be tangled or inserted in the final configuration file."
