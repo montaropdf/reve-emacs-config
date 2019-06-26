@@ -9,8 +9,8 @@
 (require 's)
 (require 'f)
 ;; (require 'ht)
-(require 'git)
-(require 'ert)
+;; (require 'git)
+;; (require 'ert)
 (require 'use-package)
 
 ;; * Variables
