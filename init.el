@@ -18,7 +18,11 @@
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
   (load (f-expand file user-emacs-directory)))
 
-(dolist module (f-files "modules" ))
+(let ((unit-list (f-files "modules")))
+  (progn
+    (dolist (unit unit-list)
+      (org-babel-tangle-file unit (f-expand "local.config.el" user-emacs-directory)))
+    (load-local "local.config.el")))
 
 
 
