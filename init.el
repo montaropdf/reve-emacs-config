@@ -23,8 +23,7 @@
   (load (f-expand file user-emacs-directory)))
 
 (unless (f-exists? config-file-location)
-  (let ((unit-list (f-files config-unit-location)))
-    (dolist (unit unit-list)
-      (org-babel-tangle-file unit config-file-location))))
+  (dolist (unit (f-files config-unit-location))
+    (org-babel-tangle-file unit config-file-location)))
 
 (load-local config-file-name)
