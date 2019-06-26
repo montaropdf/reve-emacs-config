@@ -35,8 +35,11 @@
     (cond ((f-ext? config-unit "org")
            (org-babel-tangle-file pre-config-unit config-file-location))
           ((f-ext? config-unit "el")
-           (with-temp-buffer
-             ())))))
+           (let ((config-unit-buffer (find-file-noselect config-unit)))
+             (with-current-buffer config-unit-buffer
+               (progn
+                 (goto-char (point-min))
+                 (goto-char (point-max)))))))))
 
 
 (unless (f-exists? config-file-location)
