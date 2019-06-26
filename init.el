@@ -46,11 +46,11 @@
 (unless (f-exists? config-file-location)
   (progn
     (when (f-exists? pre-config-unit)
-      (org-babel-tangle-file pre-config-unit config-file-location))
+      (tangle-or-insert pre-config-unit))
     (dolist (unit (f-files config-unit-location))
       (unless (or (eq unit "pre-config.org") (eq unit "post-config.org"))
         (org-babel-tangle-file unit config-file-location)))
     (when (f-exists? post-config-unit)
-      (org-babel-tangle-file post-config-unit config-file-location))))
+      (tangle-or-insert post-config-unit))))
 
 (load-local config-file-name)
