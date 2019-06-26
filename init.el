@@ -21,16 +21,21 @@
 (defvar config-file-location (f-expand config-file-name user-emacs-directory)
   "Location of the final configuration file to load.")
 
+(defvar pre-config-unit (f-join config-unit-location "pre-config.org"))
+
 (defun load-local (file)
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
   (load (f-expand file user-emacs-directory)))
 
 (unless (f-exists? config-file-location)
   (progn
-    (org-babel-tangle-file (f-join config-unit-location "pre-config.org") config-file-location)
+    
+    (when (f-exists? config-file-location)
+      (org-babel-tangle-file pre-config-unit config-file-location))
     (dolist (unit (f-files config-unit-location))
       (unless (or (eq unit "pre-config.org") (eq unit "post-config.org"))
         (org-babel-tangle-file unit config-file-location)))
-    (org-babel-tangle-file (f-join config-unit-location "post-config.org") config-file-location)))
+    (when (f-exists? config-file-location)
+      (org-babel-tangle-file (f-join config-unit-location "post-config.org") config-file-location))))
 
 (load-local config-file-name)
