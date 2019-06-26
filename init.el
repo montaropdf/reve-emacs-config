@@ -14,9 +14,12 @@
 
 (setq default-directory (f-full (getenv "HOME")))
 
-(defvar config-unit-location (f-expand "codes/reve-elisp/reve-econfig/modules" default-directory))
-(defvar config-file-name "local.config.el")
-(defvar config-file-location (f-expand config-file-name user-emacs-directory))
+(defvar config-unit-location (f-expand "codes/reve-elisp/reve-econfig/modules" default-directory)
+  "Location of the configuration units to be processed to create the final configuration file.")
+(defvar config-file-name "local.config.el"
+  "Name of the final configuration file to load.")
+(defvar config-file-location (f-expand config-file-name user-emacs-directory)
+  "Location of the final configuration file to load.")
 
 (defun load-local (file)
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
