@@ -16,7 +16,7 @@
 ;; * Variables
 (setq default-directory (f-full (getenv "HOME")))
 
-(defvar config-unit-location (f-expand "codes/reve-elisp/reve-econfig/modules" default-directory)
+(defvar config-unit-location (f-expand "modules" default-directory)
   "Location of the configuration units to be processed to create the final configuration file.")
 (defvar config-file-name "local.config.el"
   "Name of the final configuration file to load.")
