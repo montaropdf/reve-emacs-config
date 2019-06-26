@@ -2,6 +2,7 @@
 ;; This configuration is inspired heavily from Mike Zamansky's blog
 ;; http://cestlaz.github.io/stories/emacs/
 
+;; * Cask initialisation and require calls
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
@@ -12,6 +13,7 @@
 (require 'ert)
 (require 'use-package)
 
+;; * Variables
 (setq default-directory (f-full (getenv "HOME")))
 
 (defvar config-unit-location (f-expand "codes/reve-elisp/reve-econfig/modules" default-directory)
@@ -25,6 +27,7 @@
 (defvar post-config-unit (f-join config-unit-location "post-config.org")
   "Full path of the post-config configuration unit.")
 
+;; * Functions
 (defun load-local (file)
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
   (load (f-expand file user-emacs-directory)))
@@ -42,7 +45,7 @@
         (t
          (message "Unknown extension types."))))
 
-
+;; * Main Process
 (unless (f-exists? config-file-location)
   (progn
     (when (f-exists? pre-config-unit)
