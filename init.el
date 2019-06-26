@@ -16,15 +16,17 @@
 ;; * Variables
 (setq default-directory (f-full (getenv "HOME")))
 
-(defvar config-unit-location (f-expand "modules" default-directory)
+(defvar reve:target-directory user-emacs-directory
+  "The directory that will contain the final configuration file.")
+(defvar reve:config-unit-location (f-expand "modules" default-directory)
   "Location of the configuration units to be processed to create the final configuration file.")
-(defvar config-file-name "local.config.el"
+(defvar reve:config-file-name "local.config.el"
   "Name of the final configuration file to load.")
-(defvar config-file-location (f-expand config-file-name user-emacs-directory)
+(defvar reve:config-file-location (f-expand config-file-name user-emacs-directory)
   "Location of the final configuration file to load.")
-(defvar pre-config-unit (f-join config-unit-location "pre-config.org")
+(defvar reve:pre-config-unit (f-join config-unit-location "pre-config.org")
   "Full path of the pre-config configuration unit.")
-(defvar post-config-unit (f-join config-unit-location "post-config.org")
+(defvar reve:post-config-unit (f-join config-unit-location "post-config.org")
   "Full path of the post-config configuration unit.")
 
 ;; * Functions
