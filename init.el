@@ -29,6 +29,16 @@
   "Load FILE assuming it is located in the path stored in USER-EMACS-DIRECTORY."
   (load (f-expand file user-emacs-directory)))
 
+(defun tangle-or-insert (config-unit)
+  "Check the extension of CONFIG-UNIT and decide if it must be tangled or inserted in the final configuration file."
+  (progn
+    (cond ((f-ext? config-unit "org")
+           (org-babel-tangle-file pre-config-unit config-file-location))
+          ((f-ext? config-unit "el")
+           (with-temp-buffer
+             ())))))
+
+
 (unless (f-exists? config-file-location)
   (progn
     (when (f-exists? pre-config-unit)
