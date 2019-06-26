@@ -58,4 +58,4 @@
     (when (f-exists? reve:post-config-unit)
       (tangle-or-insert reve:post-config-unit))))
 
-(load-local config-file-name)
+(load-local reve:config-file-name)
