@@ -45,7 +45,7 @@
                (append-to-file (point-min) (point-max) reve:config-file-location))
              (kill-buffer config-unit-buffer))))
         (t
-         (message "Unknown extension types."))))
+         (message (format "Unknown extension: %s" config-unit)))))
 
 ;; * Main Process
 (unless (f-exists? reve:config-file-location)
