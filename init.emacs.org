@@ -1,0 +1,1460 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Emacs initialisation via org-babel
+
+* Extra directories with ELisp packages
+  :PROPERTIES:
+  :ID:       219bde98-9c4f-4693-9b3f-895521aab5ca
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "~/git_src/emacsmirror/bookmark-plus")
+    (add-to-list 'load-path "~/git_src/derbeutlin/filetags.el")
+    (add-to-list 'load-path "~/git_src/derbeutlin/date2name.el")
+    (add-to-list 'load-path "~/codes/3rdparty/skeletor.el")
+    (add-to-list 'load-path "~/codes/reve-elisp/reve-helpers.el")
+#+END_SRC
+
+* Personal customs
+  :PROPERTIES:
+  :ID:       b7e0ddc9-1c88-4930-a14d-6b9b59b4bf0e
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (setq inhibit-startup-message t)
+
+    (defun load-if-exists (f)
+      "Load the file if it exist and is readable."
+
+      (when (file-readable-p f) (load-file f)))
+
+    (setq bookmark-default-file "~/.personal/bookmarks")
+
+    (setq custom-file "~/.personal/customs.el")
+    (load-if-exists custom-file)
+
+    (show-paren-mode 1)
+    (tool-bar-mode -1)
+    (blink-cursor-mode 0)
+    (global-visual-line-mode nil)
+    (pending-delete-mode t)
+    (abbrev-mode t)
+
+    (global-set-key (kbd "<f5>") 'revert-buffer)
+
+    (setq calendar-day-name-array ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
+    (setq calendar-month-name-array ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet" "Août" "Septembre" "Octobre" "Novembre" "Decembre"])
+    (setq calendar-time-display-form (quote (24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))))
+    (setq calendar-week-start-day 1)
+    (setq case-fold-search t)
+    (setq column-number-mode t)
+    (setq current-language-environment "UTF-8")
+    (setq default-input-method "latin-1-prefix")
+    (setq directory-abbrev-alist nil)
+    (setq display-time-24hr-format t)
+    (setq display-time-day-and-date t)
+    (display-time-mode t)
+    (setq fill-column 100)
+    (global-font-lock-mode t)
+    (global-hl-line-mode t)
+    (setq indent-tabs-mode nil)
+    (setq indicate-buffer-boundaries (quote left))
+    (setq indicate-empty-lines t)
+    (setq mark-even-if-inactive t)
+    (setq pc-selection-mode nil)
+    (recentf-mode t)
+    (setq require-final-newline t)
+    (setq safe-local-variable-values (quote ((ispell-dictionary . "english"))))
+    (setq save-abbrevs t)
+    (setq scroll-down-aggressively 0.0)
+    (setq scroll-up-aggressively 0.0)
+    (setq show-trailing-whitespace t)
+    (setq size-indication-mode t)
+    (setq transient-mark-mode t)
+    (setq calendar-date-style 'iso)
+
+    (which-function-mode t)
+    (auto-revert-mode t)
+    (auto-fill-mode t)
+
+    (put 'downcase-region 'disabled nil)
+    (put 'upcase-region 'disabled nil)
+
+    ;;;;;;;;;;;;;;;; parenthèses, accolades et brackets ;;;;;;
+    (setq skeleton-pair t)
+    (global-set-key "[" 'skeleton-pair-insert-maybe)
+    (global-set-key "{" 'skeleton-pair-insert-maybe)
+    (global-set-key "(" 'skeleton-pair-insert-maybe)
+    (global-set-key "\"" 'skeleton-pair-insert-maybe)
+    (global-set-key "'" 'skeleton-pair-insert-maybe)
+
+    ;; The call to this personal script must be done at the beginning of
+    ;; the initialisation.  It is meant to contain personnal
+    ;; configuration that must be evaluated before most of the rest of the
+    ;; configuration.
+    (load-if-exists "~/.personal/site-pre-config.el")
+
+    (require 'date2name)
+    (require 'filetags)
+
+    (setq filetags-delimiter "--")
+
+
+    (use-package unicode-enbox
+      :ensure t)
+#+END_SRC
+
+  #+RESULTS:
+
+* Try package
+  :PROPERTIES:
+  :ID:       c7accdba-8ced-47c3-8b8d-f1e888aa7018
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package try
+	    :ensure t)
+  #+END_SRC
+
+* UI
+  :PROPERTIES:
+  :ID:       52bdcbef-bec1-4104-85f2-39255e91bdda
+  :END:
+** Which key package
+   :PROPERTIES:
+   :ID:       31a5aa2e-2afb-41ca-8386-2f02d4361ba0
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package which-key
+	     :ensure t
+	     :config
+	     (which-key-mode))
+   #+END_SRC
+
+** Window Navigation
+   :PROPERTIES:
+   :ID:       143ec2c5-47a2-412d-8e12-11080326d58c
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package ace-window
+       :ensure t
+       :init
+       (progn
+	 (global-set-key [remap other-window] 'ace-window)
+	 (custom-set-faces
+	  '(aw-leading-char-face
+	    ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+	 ))
+   #+END_SRC
+
+   #+begin_src emacs-lisp
+     (use-package window-jump
+       :ensure t
+       :bind (("C-s-<left>" . window-jump-left)
+               ("C-s-<right>" . window-jump-right)
+               ("C-s-<up>" . window-jump-up)
+               ("C-s-<down>" . window-jump-down))
+       :config (require 'window-jump))
+   #+end_src
+
+   #+RESULTS:
+   : window-jump-down
+
+** Unicode configuration
+   :PROPERTIES:
+   :ID:       a2b85d8c-0492-42ef-9c00-cc2ed2a9cfaa
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package unicode-emoticons
+       :ensure t)
+
+     (use-package unicode-enbox
+       :ensure t)
+
+     (use-package unicode-escape
+       :ensure t)
+
+     (use-package unicode-fonts
+       :ensure t
+       :config (unicode-fonts-setup))
+
+     (use-package unicode-input
+       :ensure t)
+
+     (use-package unicode-progress-reporter
+       :ensure t
+       :config (unicode-progress-reporter-setup))
+
+     (use-package unicode-whitespace
+       :ensure t
+       :config (unicode-whitespace-setup 'subdued-faces))
+
+     (use-package unidecode
+       :ensure t)
+   #+END_SRC
+
+   #+RESULTS:
+** Themes and faces
+   :PROPERTIES:
+   :ID:       95b70fa9-15f2-4e06-b680-082836647a9f
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package doom-themes
+     ;;   :ensure t)
+
+     ;; (use-package doom-modeline
+     ;;   :ensure t
+     ;;   :after 'all-the-icons)
+     ;; (use-package spaceline
+     ;;   :ensure t)
+
+     (use-package all-the-icons-dired
+       :ensure t
+       :after (dired all-the-icons)
+       ;; :init (add-hook 'dired-mode-hook 'font-lock-mode -1 )
+       :hook (dired-mode-hook))
+
+     (use-package all-the-icons-ivy
+       :ensure t
+       :after (ivy all-the-icons)
+       :config (all-the-icons-ivy-setup))
+
+     ;;doom-vibrant doom-one doom-opera doom-spacegrey doom-peacock doom-sourcerer
+     ;; (load-theme #'wombat t)
+     ;; (load-theme #'nord t)
+     (load-theme #'doom-nord t)
+     ;; (doom-modeline-mode t)
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+** Dashboard
+   :PROPERTIES:
+   :ID:       24a793e5-fe4e-4c8b-bc17-a6fa8a62d6b6
+   :END:
+   #+begin_src emacs-lisp
+     (use-package dashboard
+       :ensure t
+       :after org
+       :config
+       (dashboard-setup-startup-hook))
+
+     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+     (setq dashboard-startup-banner 'logo)
+
+     (setq dashboard-items '((recents  . 5)
+                             (bookmarks . 5)
+                             (projects . 5)
+                             (agenda . 20)))
+
+     (setq dashboard-set-heading-icons t)
+     (setq dashboard-set-file-icons t)
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+** Swiper
+   :PROPERTIES:
+   :ID:       73c2041a-6c89-43a0-8311-650e80e87b43
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package counsel
+       :ensure t
+       :bind
+       (("M-y" . counsel-yank-pop)
+        :map ivy-minibuffer-map
+        ("M-y" . ivy-next-line)))
+
+     (use-package ivy
+       :ensure t
+       :diminish (ivy-mode)
+       :bind (("C-x b" . ivy-switch-buffer))
+       :config
+       (progn
+         (ivy-mode 1)
+         (setq ivy-use-virtual-buffers t)
+         (setq ivy-count-format "%d/%d ")
+         (setq ivy-display-style 'fancy)
+         (setq ivy-height 20))
+       )
+
+     (use-package swiper
+       :ensure t
+       :bind (("C-s" . swiper)
+              ("C-r" . swiper)
+              ("C-c C-r" . ivy-resume)
+              ("M-x" . counsel-M-x)
+              ("C-x C-f" . counsel-find-file))
+       :config
+       (progn
+         ;; (ivy-mode 1)
+         ;; (setq ivy-use-virtual-buffers t)
+         ;; (setq ivy-display-style 'fancy)
+         (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+         ))
+   #+END_SRC
+
+   #+RESULTS:
+   : counsel-find-file
+
+** Auto Complete
+   :PROPERTIES:
+   :ID:       9649a96b-c1fc-480f-96bf-978c5d434e17
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package auto-complete
+     ;; :ensure t
+     ;; :init
+     ;; (progn
+     ;; (ac-config-default)
+     ;;   (global-auto-complete-mode t)
+     ;;  ))
+     (use-package company
+       :ensure t
+       :config
+       (add-hook 'after-init-hook 'global-company-mode))
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+** Undo Tree
+   :PROPERTIES:
+   :ID:       50d0bb3a-a98e-4ec1-9546-45f1949adf45
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package undo-tree
+       :ensure t
+       :init
+       (global-undo-tree-mode))
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+** IBuffer
+   :PROPERTIES:
+   :ID:       cf0f5324-4a74-4eef-8658-ff59cb27af0f
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-x C-b") 'ibuffer)
+     (setq ibuffer-saved-filter-groups
+           (quote (("default"
+                    ("dired" (mode . dired-mode))
+                    ("org" (and (not (name . "^init.emacs.org$"))
+                                (or
+                                 (name . "^.*org$")
+                                 (name . "^.*org<.+$")
+                                 (name . "\\*Org Agenda.*\\*$"))))
+                    ("IRC" (or (mode . circe-channel-mode) (mode . circe-server-mode)))
+                    ;; ("web" (or (mode . web-mode) (mode . js2-mode)))
+                    ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+                    ("mu4e" (or
+                             (mode . mu4e-compose-mode)
+                             (name . "\\*mu4e\\*")
+                             ))
+                    ("programming" (or
+                                    (mode . python-mode)
+                                    (mode . emacs-lisp)
+                                    (name . "init.emacs.org")
+                                    (name . "^.*el")
+                                    (name . "^.*lisp")
+                                    (name . "config")
+                                    (name . "^.*conf")))
+                    ("emacs" (or
+                              (name . "^\\*scratch\\*$")
+                              (name . "^\\*Messages\\*$")))))))
+     (add-hook 'ibuffer-mode-hook
+               (lambda ()
+                 (ibuffer-auto-mode 1)
+                 (ibuffer-switch-to-saved-filter-groups "default")))
+
+     ;; Don't show filter groups if there are no buffers in that group
+     (setq ibuffer-show-empty-filter-groups nil)
+   #+END_SRC
+
+   #+RESULTS:
+** Flycheck
+   :PROPERTIES:
+   :ID:       9c74c380-f706-4ca4-8811-11075429df10
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package flycheck
+       :ensure t
+       :init
+       (global-flycheck-mode t))
+
+   #+END_SRC
+** Treemacs
+   :PROPERTIES:
+   :ID:       a4af25b9-bbde-45cd-a0ba-c9f04b8a43f9
+   :END:
+ #+BEGIN_SRC emacs-lisp
+   (use-package treemacs
+     :ensure t
+     :defer t
+     :config
+     (progn
+
+       (setq treemacs-follow-after-init          t
+             treemacs-width                      35
+             treemacs-indentation                2
+             treemacs-git-integration            t
+             treemacs-collapse-dirs              3
+             treemacs-silent-refresh             nil
+             treemacs-change-root-without-asking nil
+             treemacs-sorting                    'alphabetic-desc
+             treemacs-show-hidden-files          t
+             treemacs-never-persist              nil
+             treemacs-is-never-other-window      nil
+             treemacs-goto-tag-strategy          'refetch-index)
+
+       (treemacs-follow-mode t)
+       (treemacs-filewatch-mode t))
+     :bind
+     (:map global-map
+           ([f9]        . treemacs)
+           ("<M-f9>"        . treemacs-projectile)
+           ("M-0"       . treemacs-select-window)
+           ("C-c 1"     . treemacs-delete-other-windows)
+           ))
+     (use-package treemacs-projectile
+       :defer t
+       :ensure t
+       :config
+       (setq treemacs-header-function #'treemacs-projectile-create-header)
+   )
+
+ #+END_SRC
+
+ #+RESULTS:
+
+** Hydra
+   :PROPERTIES:
+   :ID:       1233cf97-343e-4dd9-b4c9-9d1491734768
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package hydra
+       :ensure hydra)
+
+     (use-package pretty-hydra
+       :ensure t)
+
+     (global-set-key
+      (kbd "C-x t")
+      (defhydra toggle (:color blue)
+        "toggle"
+        ("a" abbrev-mode "abbrev")
+        ("s" flyspell-mode "flyspell")
+        ("d" toggle-debug-on-error "debug")
+        ("c" fci-mode "fCi")
+        ("f" auto-fill-mode "fill")
+        ("t" toggle-truncate-lines "truncate")
+        ("w" whitespace-mode "whitespace")
+        ("q" nil "cancel")))
+
+     (global-set-key
+      (kbd "C-x j")
+      (defhydra gotoline
+        ( :pre (linum-mode 1)
+               :post (linum-mode -1))
+        "goto"
+        ("t" (lambda () (interactive)(move-to-window-line-top-bottom 0)) "top")
+        ("b" (lambda () (interactive)(move-to-window-line-top-bottom -1)) "bottom")
+        ("m" (lambda () (interactive)(move-to-window-line-top-bottom)) "middle")
+        ("e" (lambda () (interactive)(end-of-buffer)) "end")
+        ("c" recenter-top-bottom "recenter")
+        ("n" next-line "down")
+        ("p" (lambda () (interactive) (forward-line -1))  "up")
+        ("g" goto-line "goto-line")))
+
+     (global-set-key
+      (kbd "C-c t")
+      (defhydra hydra-global-org (:color blue)
+        "Org"
+        ("t" org-timer-start "Start Timer")
+        ("s" org-timer-stop "Stop Timer")
+        ("r" org-timer-set-timer "Set Timer") ; This one requires you be in an orgmode doc, as it sets the timer for the header
+        ("p" org-timer "Print Timer") ; output timer value to buffer
+        ("w" (org-clock-in '(4)) "Clock-In") ; used with (org-clock-persistence-insinuate) (setq org-clock-persist t)
+        ("o" org-clock-out "Clock-Out") ; you might also want (setq org-log-note-clock-out t)
+        ("j" org-clock-goto "Clock Goto") ; global visit the clocked task
+        ("c" org-capture "Capture") ; Don't forget to define the captures you want http://orgmode.org/manual/Capture.html
+        ("l" (or )rg-capture-goto-last-stored "Last Capture")))
+
+     (defhydra multiple-cursors-hydra (:hint nil)
+       "
+              ^Up^            ^Down^        ^Other^
+         ----------------------------------------------
+         [_p_]   Next    [_n_]   Next    [_l_] Edit lines
+         [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+         [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
+         ^ ^             ^ ^             [_q_] Quit
+         "
+       ("l" mc/edit-lines :exit t)
+       ("a" mc/mark-all-like-this :exit t)
+       ("n" mc/mark-next-like-this)
+       ("N" mc/skip-to-next-like-this)
+       ("M-n" mc/unmark-next-like-this)
+       ("p" mc/mark-previous-like-this)
+       ("P" mc/skip-to-previous-like-this)
+       ("M-p" mc/unmark-previous-like-this)
+       ("r" mc/mark-all-in-region-regexp :exit t)
+       ("q" nil)
+
+       ("<mouse-1>" mc/add-cursor-on-click)
+       ("<down-mouse-1>" ignore)
+       ("<drag-mouse-1>" ignore))
+
+   #+END_SRC
+
+   #+RESULTS:
+   : multiple-cursors-hydra/body
+** Various packages
+   :PROPERTIES:
+   :ID:       ef8328fc-f20e-454e-8925-4bd6e7b18469
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package s
+       :ensure t)
+
+     (use-package beacon
+       :ensure t
+       :config (beacon-mode 1))
+
+     (use-package hungry-delete
+       :ensure t
+       :config (global-hungry-delete-mode))
+
+     (use-package aggressive-indent
+       :ensure t
+       :config (global-aggressive-indent-mode 1))
+
+     (use-package expand-region
+       :ensure t
+       :bind ("C-=" . er/expand-region))
+
+     (use-package iedit
+       :ensure t)
+
+     ;; Copied from this location:
+     ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+     (defun narrow-or-widen-dwim (p)
+       "Widen if buffer is narrowed, narrow-dwim otherwise.
+     Dwim means: region, org-src-block, org-subtree, or
+     defun, whichever applies first. Narrowing to
+     org-src-block actually calls `org-edit-src-code'.
+
+     With prefix P, don't widen, just narrow even if buffer
+     is already narrowed."
+       (interactive "P")
+       (declare (interactive-only))
+       (cond ((and (buffer-narrowed-p) (not p)) (widen))
+             ((region-active-p)
+              (narrow-to-region (region-beginning)
+                                (region-end)))
+             ((derived-mode-p 'org-mode)
+              ;; `org-edit-src-code' is not a real narrowing
+              ;; command. Remove this first conditional if
+              ;; you don't want it.
+              (cond ((ignore-errors (org-edit-src-code) t)
+                     (delete-other-windows))
+                    ((ignore-errors (org-narrow-to-block) t))
+                    (t (org-narrow-to-subtree))))
+             ((derived-mode-p 'latex-mode)
+              (LaTeX-narrow-to-environment))
+             (t (narrow-to-defun))))
+
+     ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
+     ;; This line actually replaces Emacs' entire narrowing
+     ;; keymap, that's how much I like this command. Only
+     ;; copy it if that's what you want.
+     (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+     (add-hook 'LaTeX-mode-hook
+               (lambda ()
+                 (define-key LaTeX-mode-map "\C-xn"
+                   nil)))
+   #+END_SRC
+
+   #+RESULTS:
+   | lambda | nil | (define-key LaTeX-mode-map n nil) |
+
+* Organization And Documentation
+  :PROPERTIES:
+  :ID:       eb8468f6-1f29-4986-a6f8-0c3bdb8ac62b
+  :END:
+** Bookmark+
+   :PROPERTIES:
+   :ID:       a7f127c9-81f2-4cd0-a79d-b8531367cc7a
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (require 'bookmark+)
+
+   #+END_SRC
+
+   #+RESULTS:
+   : ~/.personal/bookmarks
+
+** PlantUML
+   :PROPERTIES:
+   :ID:       3ae73601-870d-4c7a-8a59-6723aad30bb3
+   :END:
+   #+begin_src emacs-lisp
+     (use-package plantuml-mode
+       :ensure t
+       :defer t
+       :config ((setq plantuml-jar-path "/usr/share/java/plantuml.jar")
+       ;; Enable plantuml-mode for PlantUML files
+       (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))))
+
+     (use-package flycheck-plantuml
+       :ensure flycheck
+       :defer t
+       :after (flycheck plantuml-mode)
+       :config (flycheck-plantuml-setup))
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+** Calendaring
+   :PROPERTIES:
+   :ID:       f98961b9-1b14-4e7b-92b5-c6942d5350c6
+   :END:
+   #+begin_src emacs-lisp
+     (use-package calfw
+       :ensure t
+       :defer 30)
+
+     (use-package calfw-org
+       :ensure t
+       :after (org calfw)
+       :defer 30)
+   #+end_src
+
+   #+RESULTS:
+
+** Org packages
+   :PROPERTIES:
+   :ID:       2f108e83-6794-4e24-a747-4d3e0bb5056c
+   :END:
+*** Main package
+    :PROPERTIES:
+    :ID:       9f712028-d1fd-43d1-a867-c862f7585d91
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      ;;; Load org mode early to ensure that the orgmode ELPA version gets picked up, not the
+      ;;; shipped version
+      ;; (use-package org-plus-contrib
+      ;;   :pin org)
+      (use-package org
+        :ensure org-plus-contrib
+        :pin org
+        :mode (("\\.org$" . org-mode)
+	       ("\\.org_archive$" . org-mode))
+        :init (progn
+	        (setq org-log-done 'time)
+	        (setq org-agenda-span 'day)
+	        (setq org-agenda-sticky t))
+        :bind (("C-c l" . org-store-link)
+	       ;; ("C-c a" . org-agenda)
+	       ("C-c b" . org-iswitchb)
+	       ;; ("<f12>" . org-agenda)
+	       ("C-c c" . org-capture))
+        :config (progn
+		  ;; (add-to-list 'org-modules "org-habit")
+		  (use-package ob-python
+		    :defer t
+		    :config
+		    (progn
+		      (setq org-babel-python-command "python3")))
+		  (use-package ox-org
+		    :defer t)
+		  (setq org-file-apps
+		        (append '(("\\.pdf\\'" . "evince %s") ("\\.odt\\'" . "oowriter %s"))
+			        org-file-apps))
+		  (add-to-list
+		   'org-src-lang-modes '("plantuml" . plantuml))
+
+		  (setq org-plantuml-jar-path "/usr/share/java/plantuml.jar")
+
+		  (require 'org-habit)
+		  (require 'org-id)
+		  (require 'org-protocol)
+		  ))
+
+      (define-key org-mode-map (kbd "~") 'skeleton-pair-insert-maybe)
+      (define-key org-mode-map (kbd "=") 'skeleton-pair-insert-maybe)
+      (define-key org-mode-map (kbd "*") 'skeleton-pair-insert-maybe)
+      (define-key org-mode-map (kbd "+") 'skeleton-pair-insert-maybe)
+   #+END_SRC
+
+   #+RESULTS:
+   : skeleton-pair-insert-maybe
+
+*** Org Bullets
+    :PROPERTIES:
+    :ID:       aceb994a-ef1e-40ea-a8e3-3b3f8b626233
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-bullets
+        :ensure t
+        :after org
+        :config
+        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+    #+END_SRC
+
+*** Org AC
+    :PROPERTIES:
+    :ID:       5ca8076f-24ae-49fd-a016-e9f02398494c
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-ac
+        :ensure t
+        :after org
+        :init (progn
+	        (require 'org-ac)
+	        (org-ac/config-default)))
+    #+END_SRC
+
+    #+RESULTS:
+
+*** Org Super Agenda
+    :PROPERTIES:
+    :ID:       4cf59f3c-98b3-4e80-811d-62e8356d981c
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-super-agenda
+        :ensure t
+        :after org
+        :config
+        (org-super-agenda-mode 1))
+    #+END_SRC
+*** Concept mapping
+    :PROPERTIES:
+    :ID:       ef2d93c5-6582-4b97-8173-dbd625a2d1a6
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-brain
+        :ensure t
+        :after org
+        :init
+        (setq org-brain-path "~/org")
+        :config
+        (setq org-id-track-globally t)
+        (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+        ;; (push '("b" "Brain" plain (function org-brain-goto-end)
+        ;;         "* %i%?" :empty-lines 1)
+        ;;       org-capture-templates)
+        (setq org-brain-visualize-default-choices 'root)
+        (setq org-brain-title-max-length 20))
+
+      (use-package org-mind-map
+        :ensure t
+        :after (org ox-org)
+        ;; :after (require 'ox-org)
+        :config (progn
+                  (org-mind-map-display 'frame)
+                  (org-mind-map-default-graph-attribs '(("autosize" . "false")
+                                                        ("size" . "9,12")
+                                                        ("resolution" . "100")
+                                                        ("nodesep" . "0.75")
+                                                        ("overlap" . "false")
+                                                        ("splines" . "curved")
+                                                        ("rankdir" . "LR")))
+                  (org-mind-map-dot-output ("png")))
+        )
+    #+END_SRC
+
+    #+RESULTS:
+*** Org Timeline
+    :PROPERTIES:
+    :ID:       e8d8f731-ba91-4da4-a5d0-696513fe92c5
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-timeline
+        :ensure t
+        :after org
+        :config (add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
+    #+END_SRC
+
+    #+RESULTS:
+    : t
+
+*** Org Board
+    :PROPERTIES:
+    :ID:       d7612dab-55d2-44a9-8648-8f2a3db97859
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-board
+        :ensure t
+        :after org
+        )
+
+      (global-set-key (kbd "C-c o") org-board-keymap)
+    #+END_SRC
+
+    #+RESULTS:
+    : (keymap (79 . org-attach-reveal-in-emacs) (120 . org-board-run-after-archive-function) (99 . org-board-cancel) (51 . org-board-diff3) (100 . org-board-diff) (111 . org-board-open) (107 . org-board-delete-all) (110 . org-board-new) (114 . org-board-archive-dry-run) (97 . org-board-archive))
+*** Org Alert
+    :PROPERTIES:
+    :ID:       1b2653b4-0d44-4b80-bd63-4b7719290e7d
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-alert
+        :ensure t
+        :after org
+        :init (progn (setq org-alert-interval 3600)
+		     (setq alert-default-style 'libnotify))
+        :config (org-alert-enable))
+    #+END_SRC
+
+    #+RESULTS:
+    : t
+
+*** Org Contacts
+    :PROPERTIES:
+    :ID:       7baed027-8b2d-458b-ace9-988d5cdca171
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-contacts
+        :ensure nil
+        :after org)
+    #+END_SRC
+
+    #+RESULTS:
+
+*** Org Journal
+    :PROPERTIES:
+    :ID:       8aea1c9b-1e21-4d18-8e6f-0bc2564fbb89
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-journal
+        :ensure t
+        :after org
+        )
+    #+END_SRC   
+
+    #+RESULTS:
+
+*** Site specific configuration
+    :PROPERTIES:
+    :ID:       a546a436-0f22-49de-87bd-39c31659b7c7
+    :END:
+    #+BEGIN_SRC emacs-lisp
+      (with-eval-after-load 'org
+        (load-if-exists "~/.personal/org-config.el")
+        )
+    #+END_SRC
+
+    #+RESULTS:
+    : t
+** Reveal.js
+   :PROPERTIES:
+   :ID:       030d445f-b9de-4f71-a8fd-e2138aff6682
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package ox-reveal
+       :ensure t
+       :config
+       (require 'ox-reveal)
+       (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+       (setq org-reveal-mathjax t))
+
+     (use-package htmlize
+       :ensure t)
+   #+END_SRC
+
+   #+RESULTS:
+** MediaWiki
+   :PROPERTIES:
+   :ID:       e409ebbf-125b-4ffa-9ddf-ec155afde625
+   :END:
+   #+begin_src emacs-lisp
+     (use-package ox-mediawiki
+       :ensure t)
+   #+end_src
+
+   #+RESULTS:
+
+** PDF tools
+   :PROPERTIES:
+   :ID:       d416152f-e988-44fc-afa2-e2fa9f084fd9
+   :END:
+ #+BEGIN_SRC emacs-lisp
+ (use-package pdf-tools
+ :ensure t)
+ (use-package org-pdfview
+ :ensure t)
+
+ (require 'pdf-tools)
+ (require 'org-pdfview)
+
+ #+END_SRC
+** EPub reader
+   :PROPERTIES:
+   :ID:       c9ed21bb-6295-4a51-b026-e0c5ea4ffad2
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package nov
+       :ensure t
+       :mode (("\\.epub$" . nov-mode)))
+   #+END_SRC
+** Help and documentation
+   :PROPERTIES:
+   :ID:       e409b3ab-caf3-4f47-b818-f40c74ae1abf
+   :END:
+   #+begin_src emacs-lisp
+     (use-package tldr
+       :ensure t)
+   #+end_src
+
+   #+RESULTS:
+
+* Project Management And Development
+  :PROPERTIES:
+  :ID:       f8e414f7-19f7-4212-9fce-9c30988a7e87
+  :END:
+** Projectile
+   :PROPERTIES:
+   :ID:       723fba61-4f03-42ca-bb43-f73b589aa7d1
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package projectile
+       :ensure t)
+
+     (setq projectile-known-projects-file "~/.personal/projectile-bookmarks.eld")
+     (setq projectile-completion-system 'ivy)
+
+     (projectile-mode +1)
+     (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+   #+END_SRC
+
+   #+RESULTS:
+   : projectile-command-map
+
+** Magit
+   :PROPERTIES:
+   :ID:       74a14e41-c573-4ecb-bd10-4516c5d53943
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :ensure t
+       :init
+       (progn
+         (bind-key "C-x g" 'magit-status)
+         ))
+
+     (use-package git-gutter
+       :ensure t
+       :init
+       (global-git-gutter-mode +1))
+
+     (global-set-key (kbd "M-g M-g") 'hydra-git-gutter/body)
+
+     (use-package git-timemachine
+       :ensure t)
+
+     ;; (use-package gitconfig
+     ;;   :ensure t)
+
+     (use-package git-auto-commit-mode
+       :ensure t)
+
+     (use-package git-blamed
+       :ensure t)
+
+     (use-package gitconfig-mode
+       :ensure t)
+
+     (use-package gited
+       :ensure t)
+
+     (use-package forge
+       :ensure t)
+
+     ;; (add-to-list 'load-path "~/git_src/nlamirault/emacs-gitlab")
+     ;; (require 'gitlab)
+
+     ;; (setq gitlab-host "https://10.0.0.4"
+     ;;       gitlab-token-id "a3uzUsXG7fcytP8HUxkA")
+
+     ;; (use-package gitlab
+     ;;   :ensure t
+     ;;   :config (setq gitlab-host "https://10.0.0.4"
+     ;; 		gitlab-token-id "a3uzUsXG7fcytP8HUxkA"))
+
+     (use-package gitlab-ci-mode
+       :ensure t)
+
+     (use-package gitlab-ci-mode-flycheck
+       :ensure t)
+
+     (use-package ivy-gitlab
+       :ensure t
+       :after (ivy gitlab))
+
+     (use-package vcsh
+       :ensure t)
+
+     (use-package magit-vcsh
+       :ensure t
+       :after (vcsh magit))
+
+     (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
+                                           :hint nil)
+       "
+     Git gutter:
+       _j_: next hunk        _s_tage hunk     _q_uit
+       _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
+       ^ ^                   _p_opup hunk
+       _h_: first hunk
+       _l_: last hunk        set start _R_evision
+     "
+       ("j" git-gutter:next-hunk)
+       ("k" git-gutter:previous-hunk)
+       ("h" (progn (goto-char (point-min))
+                   (git-gutter:next-hunk 1)))
+       ("l" (progn (goto-char (point-min))
+                   (git-gutter:previous-hunk 1)))
+       ("s" git-gutter:stage-hunk)
+       ("r" git-gutter:revert-hunk)
+       ("p" git-gutter:popup-hunk)
+       ("R" git-gutter:set-start-revision)
+       ("q" nil :color blue)
+       ("Q" (progn (git-gutter-mode -1)
+                   ;; git-gutter-fringe doesn't seem to
+                   ;; clear the markup right away
+                   (sit-for 0.1)
+                   (git-gutter:clear))
+        :color blue))
+   #+END_SRC
+
+   #+RESULTS:
+   : hydra-git-gutter/body
+
+** Yasnippet
+   :PROPERTIES:
+   :ID:       8e74cc61-8f06-459b-af77-30c83beafb85
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :ensure t
+       :init
+       (yas-global-mode 1))
+
+     (use-package yasnippet-snippets
+       :ensure t)
+   #+END_SRC
+
+   #+RESULTS:
+** Skeletor
+   :PROPERTIES:
+   :ID:       41c20fc4-7a1c-4f9d-934c-d278a98c3cea
+   :END:
+ #+BEGIN_SRC emacs-lisp
+   (require 'skeletor)
+
+
+   ;; (use-package skeletor
+   ;;   :ensure t
+   ;;   :config (setq skeletor-user-directory "~/.personal/skeletons"))
+
+   ;; (skeletor-define-template "python3-library" "Python3-project")
+
+   ;; (skeletor-define-template "elpy-python3-library" "Python3 project for ElPy")
+
+   (load-if-exists "~/.personal/skeletor-config.el")
+ #+END_SRC
+
+ #+RESULTS:
+
+** Python
+   :PROPERTIES:
+   :ID:       7c290139-1396-49fa-b2fd-66a46cffb590
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (setq py-python-command "python3")
+     (setq python-shell-interpreter "python3")
+     (setq-default indent-tabs-mode nil)
+
+     (use-package elpy
+       :ensure t
+       :config (elpy-enable))
+
+     (setq python-shell-interpreter "python3"
+           ;; python-shell-interpreter-args "console --simple-prompt"
+           ;; python-shell-prompt-detect-failure-warning nil
+           )
+     ;; (add-to-list 'python-shell-completion-native-disabled-interpreters
+     ;;              "jupyter")
+
+     (use-package pipenv
+       :ensure t
+       :defer t
+       :hook python-mode-hook
+       :config (progn
+                 (setq pipenv-executable "~/.local/bin/pipenv")
+                 (setenv "WORKON_HOME" "/home/roland/.local/share/virtualenvs")
+                 (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended)))
+   #+END_SRC
+
+   #+RESULTS:
+   : python3
+
+** EIN and PYNT
+   :PROPERTIES:
+   :ID:       cf2a7bf9-7b43-477f-8a60-629842453094
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package pynt
+     ;;   :ensure t)
+
+     ;; (use-package ein
+     ;;   :ensure t)
+   #+END_SRC
+
+   #+RESULTS:
+** Cask
+   :PROPERTIES:
+   :ID:       fba0f701-512b-4e4c-a98f-a03b3746b39b
+   :END:
+   #+begin_src emacs-lisp
+     (use-package cask
+       :ensure t)
+
+     (use-package cask-mode
+       :ensure t)
+
+     (use-package cask-package-toolset
+       :ensure t)
+   #+end_src
+** Common Lisp
+   :PROPERTIES:
+   :ID:       082c983f-04d7-45cc-a6fb-61057c76b741
+   :END:
+ #+begin_src emacs-lisp
+   ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+   ;; (use-package slime
+   ;;   :ensure t
+   ;;   :defer t)
+
+   ;; (use-package slime-company
+   ;;   :ensure t
+   ;;   :after slime
+   ;;   :defer t)
+
+   (use-package sly
+     :ensure t
+     :defer t)
+
+   (use-package sly-quicklisp
+     :ensure t
+     :after sly
+     :defer t)
+
+   (use-package sly-asdf
+     :ensure t
+     :after sly
+     :defer t)
+
+   (setq inferior-lisp-program "/usr/bin/sbcl")
+   (setq sly-contribs '(sly-fancy))
+   ;; (global-company-mode)
+
+   #+end_src
+
+ #+RESULTS:
+ : t
+
+** Regex
+   :PROPERTIES:
+   :ID:       5bae40db-94b4-4215-981a-6b09fdffdb86
+   :END:
+ #+BEGIN_SRC emacs-lisp
+ (use-package pcre2el
+ :ensure t
+ :config 
+ (pcre-mode))
+ #+END_SRC
+** Ansible
+   :PROPERTIES:
+   :ID:       fd3c309e-16ba-46f1-935e-047cca805495
+   :END:
+   #+begin_src elisp
+     (use-package yaml-mode
+       :ensure t
+       :mode ("\\.yml|\\.yaml" . yaml-mode))
+
+     (use-package ansible
+       :ensure t
+       :after yaml-mode
+       :mode ("\\.yml|\\.yaml" . yaml-mode))
+
+     (add-hook 'yaml-mode-hook '(lambda () (ansible 1)))
+     (setq ansible-vault-pass-file "~/bin/get-vault-pass")
+
+     (use-package jinja2-mode
+       :ensure t
+       :defer t
+       :mode ("\\.j2|\\.jinja2" . jinja2-mode))
+   #+end_src
+* Communications
+  :PROPERTIES:
+  :ID:       f3d9137f-4480-4b8e-91d2-be978926e8d1
+  :END:
+** Elfeed
+   :PROPERTIES:
+   :ID:       2cedd120-7c3a-4b72-add3-c46e3aab8b5b
+   :END:
+    #+BEGIN_SRC emacs-lisp
+      (load-if-exists "~/.personal/elfeed-config.el")
+
+      (use-package elfeed
+        :ensure t
+        :bind (:map elfeed-search-mode-map
+                    ("q" . bjm/elfeed-save-db-and-bury)
+                    ("Q" . bjm/elfeed-save-db-and-bury)
+                    ("m" . elfeed-toggle-star)
+                    ("M" . elfeed-toggle-star)
+                    ("j" . mz/make-and-run-elfeed-hydra)
+                    ("J" . mz/make-and-run-elfeed-hydra)
+                    )
+        :config
+        (defalias 'elfeed-toggle-star
+          (elfeed-expose #'elfeed-search-toggle-all 'star))
+
+        )
+
+      (use-package elfeed-goodies
+        :ensure t
+        :config (elfeed-goodies/setup))
+
+
+      (use-package elfeed-org
+        :ensure t
+        :config (progn
+                  (elfeed-org)
+                  (setq rmh-elfeed-org-files (list "~/org/private/computing/elfeed.org"))))
+    #+END_SRC
+
+    #+RESULTS:
+    : mz/make-and-run-elfeed-hydra
+
+** Email
+   :PROPERTIES:
+   :ID:       15fcdc49-3758-4422-abcc-7e9e912531c2
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     ;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
+
+      (use-package mu4e
+        ;; :ensure t
+        :load-path "/usr/local/share/emacs/site-lisp/mu4e/"
+        ;; :bind ((:map mu4e-headers-mode-map ((kbd "C-c c") . org-mu4e-store-and-capture))
+        ;; 	  (:map mu4e-view-mode-map    ((kbd "C-c c") . org-mu4e-store-and-capture)))
+        :config (setq
+		  mu4e-index-cleanup nil      ;; don't do a full cleanup check
+		  mu4e-index-lazy-check t     ;; don't consider up-to-date dirs
+		  org-mu4e-link-query-in-headers-mode t
+		  mu4e-change-filenames-when-moving t)
+
+        )
+
+     ;; (define-key mu4e-headers-mode-map (kbd "C-c c") 'org-mu4e-store-and-capture)
+     ;; (define-key mu4e-view-mode-map    (kbd "C-c c") 'org-mu4e-store-and-capture)
+
+
+      (use-package org-mu4e
+        ;; :ensure t
+        :load-path "/usr/local/share/emacs/site-lisp/mu4e/"
+        :after (org mu4e)
+        :defer t
+      )
+
+     (use-package smtpmail
+       :ensure t
+       :defer t)
+
+     (use-package mu4e-alert
+       :ensure t
+       :after 'mu4e
+       :config ((mu4e-alert-set-default-style 'libnotify)
+	        (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+	        (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+
+     (with-eval-after-load 'mu4e
+      (load-if-exists "~/.personal/email-multiacc-config.el")
+     )
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
+* Files and Systems Management
+  :PROPERTIES:
+  :ID:       422d77a8-2578-4df1-8fc2-c7773a741f14
+  :END:
+** File system browsing
+   :PROPERTIES:
+   :ID:       32424e1b-a2f7-4808-a58f-5cfb525d2651
+   :END:
+  #+begin_src emacs-lisp
+    (use-package ranger
+      :ensure t)
+  #+end_src
+
+  #+RESULTS:
+** Password-store
+   :PROPERTIES:
+   :ID:       16e0cbb6-b0e0-4cf6-ac0c-2dae69b1b932
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package pass
+       :ensure t
+       :config
+       (setq password-store-password-length 15))
+
+     (use-package ivy-pass
+       :ensure t
+       :after (ivy pass))
+
+     (use-package password-store
+       :ensure t
+       :after pass)
+   #+END_SRC
+
+   #+RESULTS:
+** Shell
+   :PROPERTIES:
+   :ID:       7b9e74a1-1973-4bf7-afd9-d2d23aa8e91a
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package shx
+       :ensure t)
+   #+END_SRC
+
+   #+RESULTS:
+** CSV support
+   :PROPERTIES:
+   :ID:       1f6c8cb8-aa18-4403-b4c2-f079842a6552
+   :END:
+ #+begin_src emacs-lisp
+   (use-package csv-mode
+     :ensure t
+     :defer t
+     :config (add-to-list 'csv-separators ";")
+     (add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode)))
+ #+end_src
+
+ #+RESULTS:
+ : t
+
+** Direnv
+   :PROPERTIES:
+   :ID:       7c6cc618-ae19-4718-bb18-9b7ff45841cf
+   :END:
+   #+begin_src emacs-lisp
+     (use-package direnv
+       :ensure t
+       :config (direnv-mode))
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+** IP Calc
+   :PROPERTIES:
+   :ID:       0de63cb8-6e36-430f-80c8-095011369bd2
+   :END:
+   #+begin_src emacs-lisp
+     (use-package ipcalc
+       :ensure t
+       :defer t)
+   #+end_src
+
+   #+RESULTS:
+
+** Containers and virtualization
+   :PROPERTIES:
+   :ID:       fdb22049-0b86-4b86-85f6-76893e809eb7
+   :END:
+   #+begin_src elisp
+     (use-package lxc
+       :ensure t)
+
+     ;; (let ((default-directory "/sudo::")) (shell-command-to-string "sudo lxc-ls"))
+   #+end_src
+* Music
+  :PROPERTIES:
+  :ID:       410590fc-0f9a-424a-b196-6913b9c7151e
+  :END:
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package simple-mpc
+  ;;   :ensure t
+  ;;   :config (setq simple-mpc-playlist-format "[[%artist% - ]%title%]|[%file%]"))
+  (use-package mingus
+    :ensure t)
+
+#+END_SRC
+
+#+RESULTS:
+
+* Crux
+  :PROPERTIES:
+  :ID:       b5b892e4-5910-4807-829a-ed3f15c0d119
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package crux
+      :ensure t
+      :bind (("<f6> o" . crux-open-with)
+	     ("C-a" . crux-move-beginning-of-line)))
+  #+END_SRC
+
+  #+RESULTS:
+  : crux-move-beginning-of-line
+* Various Packages to try
+  :PROPERTIES:
+  :ID:       32742df6-56e8-4549-a0fb-05532e21c38b
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    ;; (use-package parsec
+    ;;   :ensure t)
+
+    ;; (use-package x509-mode
+    ;;   :ensure t)
+
+    ;; (use-package sauron
+    ;;   :ensure t)
+    ;; (use-package workgroups
+    ;;   :ensure t)
+
+    ;; (setq wg-prefix-key (kbd "C-c a"))
+
+    ;; (use-package persp-mode
+    ;;   :ensure t)
+
+
+    ;; (with-eval-after-load "persp-mode-autoloads"
+    ;;   (setq wg-morph-on nil)
+    ;;   ;; switch off the animation of restoring window configuration
+    ;;   (setq persp-autokill-buffer-on-remove 'kill-weak)
+    ;;   (add-hook 'after-init-hook #'(lambda () (persp-mode 1))))
+
+  #+END_SRC
+
+  #+RESULTS:
+  : t
+* Post configuration
+  :PROPERTIES:
+  :ID:       74dea9c2-c59f-4e40-8049-943c6b2816ae
+  :END:
+  #+begin_src emacs-lisp
+    (load-if-exists "~/.personal/site-post-config.el")
+
+    ;; (set-face-attribute 'cursor nil :background "DarkOliveGreen1")
+  #+end_src
+
+  #+RESULTS:
+  : t
