@@ -31,7 +31,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-<<<<<<< HEAD
->>>>>>> e3e60cf... Current configuration
-=======
->>>>>>> 630c3375bf68b41b1cbed86efd0f699f3ab95c13
