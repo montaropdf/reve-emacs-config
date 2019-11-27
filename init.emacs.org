@@ -1182,7 +1182,7 @@
    :PROPERTIES:
    :ID:       fd3c309e-16ba-46f1-935e-047cca805495
    :END:
-   #+begin_src elisp
+   #+begin_src emacs-lisp
      (use-package yaml-mode
        :ensure t
        :mode ("\\.yml|\\.yaml" . yaml-mode))
