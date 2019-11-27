@@ -1193,7 +1193,7 @@
        :mode ("\\.yml|\\.yaml" . yaml-mode))
 
      (add-hook 'yaml-mode-hook '(lambda () (ansible 1)))
-     (setq ansible-vault-pass-file "~/bin/get-vault-pass")
+     (setq ansible-vault-password-file "~/bin/get-vault-pass")
 
      (use-package jinja2-mode
        :ensure t
