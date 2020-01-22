@@ -228,11 +228,11 @@
    :ID:       24a793e5-fe4e-4c8b-bc17-a6fa8a62d6b6
    :END:
    #+begin_src emacs-lisp
-     (use-package dashboard
-       :ensure t
-       :after org
-       :config
-       (dashboard-setup-startup-hook))
+     ;; (use-package dashboard
+     ;;   :ensure t
+     ;;   :after org
+     ;;   :config
+     ;;   (dashboard-setup-startup-hook))
    #+end_src
 
    #+RESULTS:
@@ -370,6 +370,20 @@
        (global-flycheck-mode t))
 
    #+END_SRC
+** Flyspell
+   :PROPERTIES:
+   :ID:       17f07ae8-d7c8-44e8-8462-56c7522d337a
+   :END:
+   #+begin_src emacs-lisp
+     (setq ispell-program-name "hunspell")
+     (setq ispell-local-dictionary "en_GB")
+     (setq ispell-local-dictionary-alist
+           '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+
+     (add-hook 'text-mode-hook 'flyspell-mode)
+     (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+   #+end_src
+
 ** Treemacs
    :PROPERTIES:
    :ID:       a4af25b9-bbde-45cd-a0ba-c9f04b8a43f9
@@ -522,6 +536,10 @@
      (use-package iedit
        :ensure t)
 
+     (use-package rainbow-delimiters
+       :ensure t
+       :hook (prog-mode . rainbow-delimiters-mode))
+
      ;; Copied from this location:
      ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
      (defun narrow-or-widen-dwim (p)
@@ -559,6 +577,7 @@
                (lambda ()
                  (define-key LaTeX-mode-map "\C-xn"
                    nil)))
+
    #+END_SRC
 
    #+RESULTS:
@@ -1271,9 +1290,144 @@
      )
    #+END_SRC
 
-   #+RESULTS:
-   : t
+** ERC
+   :PROPERTIES:
+   :ID:       ea6b5722-d8ba-4962-a614-06a1ee649560
+   :END:
+#+begin_src emacs-lisp
+  (use-package erc
+    :ensure t
+    :delight "ε "
+    :preface
+    (defun my/erc-browse-last-url ()
+      "Searchs backwards through an ERC buffer, looking for a URL. When a URL is
+       found, it prompts you to open it."
+      (interactive)
+      (save-excursion
+        (let ((ffap-url-regexp "\\(https?://\\)."))
+          (ffap-next-url t t))))
 
+    (defun my/erc-count-users ()
+      "Displays the number of users and ops connected on the current channel."
+      (interactive)
+      (if (get-buffer "irc.eu.freenode.net:6667")
+          (let ((channel (erc-default-target)))
+            (if (and channel (erc-channel-p channel))
+                (let ((hash-table (with-current-buffer (erc-server-buffer)
+                                    erc-server-users))
+                      (users 0)
+                      (ops 0))
+                  (maphash (lambda (k v)
+                             (when (member (current-buffer)
+                                           (erc-server-user-buffers v))
+                               (incf users))
+                             (when (erc-channel-user-op-p k)
+                               (incf ops)))
+                           hash-table)
+                  (message "%d users (%s ops) are online on %s" users ops channel))
+              (user-error "The current buffer is not a channel")))
+        (user-error "You must first be connected on IRC")))
+
+    (defun my/erc-get-ops ()
+      "Displays the names of ops users on the current channel."
+      (interactive)
+      (if (get-buffer "irc.eu.freenode.net:6667")
+          (let ((channel (erc-default-target)))
+            (if (and channel (erc-channel-p channel))
+                (let (ops)
+                  (maphash (lambda (nick cdata)
+                             (if (and (cdr cdata)
+                                      (erc-channel-user-op (cdr cdata)))
+                                 (setq ops (cons nick ops))))
+                           erc-channel-users)
+                  (if ops
+                      (message "The online ops users are: %s"  (mapconcat 'identity ops " "))
+                    (message "There are no ops users online on %s" channel)))
+              (user-error "The current buffer is not a channel")))
+        (user-error "You must first be connected on IRC")))
+
+    (defun my/erc-notify (nickname message)
+      "Displays a notification message for ERC."
+      (let* ((channel (buffer-name))
+             (nick (erc-hl-nicks-trim-irc-nick nickname))
+             (title (if (string-match-p (concat "^" nickname) channel)
+                        nick
+                      (concat nick " (" channel ")")))
+             (msg (s-trim (s-collapse-whitespace message))))
+        (alert (concat nick ": " msg) :title title)))
+
+    (defun my/erc-preprocess (string)
+      "Avoids channel flooding."
+      (setq str (string-trim (replace-regexp-in-string "\n+" " " str))))
+
+    (defun my/erc-reset-track-mode ()
+      "Resets ERC track mode."
+      (interactive)
+      (setq erc-modified-channels-alist nil)
+      (erc-modified-channels-update)
+      (erc-modified-channels-display)
+      (force-mode-line-update))
+
+    (defun my/erc-start-or-switch ()
+      "Connects to ERC, or switch to last active buffer."
+      (interactive)
+      (if (get-buffer "irc.eu.freenode.net:6667")
+          (erc-track-switch-buffer 1)
+        (erc :server "irc.eu.freenode.net" :port 6667 :nick "montaropdf")))
+    :hook ((ercn-notify . my/erc-notify)
+           (erc-send-pre . my/erc-preprocess))
+    :custom-face
+    (erc-action-face ((t (:foreground "#8fbcbb"))))
+    (erc-error-face ((t (:foreground "#bf616a"))))
+    (erc-input-face ((t (:foreground "#ebcb8b"))))
+    (erc-notice-face ((t (:foreground "#ebcb8b"))))
+    (erc-timestamp-face ((t (:foreground "#a3be8c"))))
+    :custom
+    ;; (erc-nick '("montaropdf"))
+    (erc-prompt-for-nickserv-password nil)
+    (erc-autojoin-channels-alist '(("freenode.net" "#fedora-fr" "#zsh" "#stumpwm"
+                                    "#emacs" "#lisp" "#lispcafe" "#clschool"
+                                    "#org-mode" "#python"
+                                    "#wolfplex")))
+    (erc-autojoin-timing 'ident)
+    (erc-fill-function 'erc-fill-static)
+    (erc-fill-static-center 22)
+    (erc-header-line-format "%n on %t (%m)")
+    (erc-hide-list '("JOIN" "PART" "QUIT"))
+    (erc-join-buffer 'bury)
+    (erc-kill-buffer-on-part t)
+    (erc-kill-queries-on-quit t)
+    (erc-kill-server-buffer-on-quit t)
+    (erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+    (erc-lurker-threshold-time 43200)
+    (erc-prompt-for-nickserv-password nil)
+    (erc-server-reconnect-attempts 5)
+    (erc-server-reconnect-timeout 3)
+    (erc-track-exclude-types '("JOIN" "MODE" "NICK" "PART" "QUIT"
+                               "324" 
+
+                               "329" "332" "333" "353" "477"))
+    :config
+    (add-to-list 'erc-modules 'notifications)
+    (add-to-list 'erc-modules 'spelling)
+    (add-to-list 'erc-modules 'services)
+    (add-to-list 'erc-modules 'autojoin)
+    (add-to-list 'erc-modules 'menu)
+    (erc-services-mode 1)
+    (erc-update-modules))
+
+  (use-package erc-hl-nicks
+    :ensure t
+    :after erc)
+
+  (use-package erc-image
+    :ensure t
+    :after erc)
+
+  (use-package erc-status-sidebar
+    :ensure t
+    :after erc)
+#+end_src
 * Files and Systems Management
   :PROPERTIES:
   :ID:       422d77a8-2578-4df1-8fc2-c7773a741f14
@@ -1433,19 +1587,19 @@
   :ID:       74dea9c2-c59f-4e40-8049-943c6b2816ae
   :END:
   #+begin_src emacs-lisp
-    (org-agenda-list)
+    ;; (org-agenda-list)
 
-    (setq dashboard-startup-banner 'logo)
+    ;; (setq dashboard-startup-banner 'logo)
 
-    (setq dashboard-items '((recents  . 5)
-                            (bookmarks . 5)
-                            (projects . 5)
-                            (agenda . 20)))
+    ;; (setq dashboard-items '((recents  . 5)
+    ;;                         (bookmarks . 5)
+    ;;                         (projects . 5)
+    ;;                         (agenda . 20)))
 
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
+    ;; (setq dashboard-set-heading-icons t)
+    ;; (setq dashboard-set-file-icons t)
 
-    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    ;; (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
     (load-if-exists "~/.personal/site-post-config.el")
 
