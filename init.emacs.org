@@ -7,8 +7,6 @@
   :END:
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'load-path "~/git_src/emacsmirror/bookmark-plus")
-    (add-to-list 'load-path "~/git_src/derbeutlin/filetags.el")
-    (add-to-list 'load-path "~/git_src/derbeutlin/date2name.el")
     (add-to-list 'load-path "~/codes/3rdparty/skeletor.el")
     (add-to-list 'load-path "~/codes/reve-elisp/reve-helpers.el")
 #+END_SRC
@@ -91,9 +89,11 @@
     ;; configuration.
     (load-if-exists "~/.personal/site-pre-config.el")
 
-    (require 'date2name)
-    (require 'filetags)
-
+    (use-package date2name                                                                                                                                   
+ 	         :ensure t)                                                                                                                                               
+    (use-package filetags                                                                                                                                    
+     	         :ensure t)                                                                                                                                               
+ 
     (setq filetags-delimiter "--")
 
 
