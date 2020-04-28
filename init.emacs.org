@@ -183,8 +183,8 @@
    :ID:       95b70fa9-15f2-4e06-b680-082836647a9f
    :END:
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package doom-themes
-     ;;   :ensure t)
+     (use-package doom-themes
+        :ensure t)
 
      ;; (use-package doom-modeline
      ;;   :ensure t
