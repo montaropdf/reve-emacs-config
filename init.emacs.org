@@ -1,16 +1,6 @@
 # -*- eval: (git-auto-commit-mode 1) -*-
 #+TITLE: Emacs initialisation via org-babel
 
-* Extra directories with ELisp packages
-  :PROPERTIES:
-  :ID:       219bde98-9c4f-4693-9b3f-895521aab5ca
-  :END:
-  #+BEGIN_SRC emacs-lisp
-    (add-to-list 'load-path "~/git_src/emacsmirror/bookmark-plus")
-    (add-to-list 'load-path "~/codes/3rdparty/skeletor.el")
-    (add-to-list 'load-path "~/codes/reve-elisp/reve-helpers.el")
-#+END_SRC
-
 * Personal customs
   :PROPERTIES:
   :ID:       b7e0ddc9-1c88-4930-a14d-6b9b59b4bf0e
@@ -587,17 +577,6 @@
   :PROPERTIES:
   :ID:       eb8468f6-1f29-4986-a6f8-0c3bdb8ac62b
   :END:
-** Bookmark+
-   :PROPERTIES:
-   :ID:       a7f127c9-81f2-4cd0-a79d-b8531367cc7a
-   :END:
-   #+BEGIN_SRC emacs-lisp
-     (require 'bookmark+)
-
-   #+END_SRC
-
-   #+RESULTS:
-   : ~/.personal/bookmarks
 
 ** PlantUML
    :PROPERTIES:
@@ -1052,28 +1031,6 @@
        :ensure t
        :after yasnippet)
    #+END_SRC
-
-   #+RESULTS:
-** Skeletor
-   :PROPERTIES:
-   :ID:       41c20fc4-7a1c-4f9d-934c-d278a98c3cea
-   :END:
- #+BEGIN_SRC emacs-lisp
-   (require 'skeletor)
-
-
-   ;; (use-package skeletor
-   ;;   :ensure t
-   ;;   :config (setq skeletor-user-directory "~/.personal/skeletons"))
-
-   ;; (skeletor-define-template "python3-library" "Python3-project")
-
-   ;; (skeletor-define-template "elpy-python3-library" "Python3 project for ElPy")
-
-   (load-if-exists "~/.personal/skeletor-config.el")
- #+END_SRC
-
- #+RESULTS:
 
 ** Python
    :PROPERTIES:
