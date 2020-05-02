@@ -1153,6 +1153,9 @@
      (setq ansible-vault-password-file "~/bin/get-vault-pass")
      (setq ansible-vault-pass-file "~/bin/get-vault-pass")
 
+     (use-package ansible-doc
+       :ensure t)
+
      (use-package jinja2-mode
        :ensure t
        :defer t
