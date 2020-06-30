@@ -1,0 +1,212 @@
+#+TITLE: Emacs Project Management and Development configuration initialisation via org-babel
+
+* Dash
+:PROPERTIES:
+:ID:       456c3be0-39cd-4a57-9b2e-74c18420bc7f
+:END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package dash
+		 :ensure t)
+  #+END_SRC
+* Projectile
+  :PROPERTIES:
+  :ID:       723fba61-4f03-42ca-bb43-f73b589aa7d1
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package projectile
+      :ensure t
+      :bind-keymap ("C-c p" . projectile-command-map))
+      :config
+      (setq projectile-known-projects-file (f-expand "projectile-bookmarks.eld" emacs-user-data-dir))
+      (setq projectile-completion-system 'ivy)
+      (projectile-mode +1)
+    ;; (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    ;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  #+END_SRC
+* Magit
+  :PROPERTIES:
+  :ID:       74a14e41-c573-4ecb-bd10-4516c5d53943
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :bind ("C-x g" . magit-status))
+
+    (use-package git-gutter
+      :ensure t
+      :init
+      (global-git-gutter-mode +1)
+      :bind ("M-g M-g" . hydra-git-gutter/body)
+      :config (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
+                                                    :hint nil)
+                "
+    Git gutter:
+      _j_: next hunk        _s_tage hunk     _q_uit
+      _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
+      ^ ^                   _p_opup hunk
+      _h_: first hunk
+      _l_: last hunk        set start _R_evision
+    "
+                ("j" git-gutter:next-hunk)
+                ("k" git-gutter:previous-hunk)
+                ("h" (progn (goto-char (point-min))
+                            (git-gutter:next-hunk 1)))
+                ("l" (progn (goto-char (point-min))
+                            (git-gutter:previous-hunk 1)))
+                ("s" git-gutter:stage-hunk)
+                ("r" git-gutter:revert-hunk)
+                ("p" git-gutter:popup-hunk)
+                ("R" git-gutter:set-start-revision)
+                ("q" nil :color blue)
+                ("Q" (progn (git-gutter-mode -1)
+                            ;; git-gutter-fringe doesn't seem to
+                            ;; clear the markup right away
+                            (sit-for 0.1)
+                            (git-gutter:clear))
+                 :color blue)))
+
+    (use-package git-timemachine
+      :ensure t)
+
+    (use-package git-auto-commit-mode
+      :ensure t)
+
+    (use-package git-blamed
+      :ensure t)
+
+    (use-package gitconfig-mode
+      :ensure t)
+
+    (use-package forge
+      :ensure t
+      :after magit)
+
+    ;; (use-package gitlab-ci-mode
+    ;;   :ensure t)
+
+    ;; (use-package gitlab-ci-mode-flycheck
+    ;;   :ensure t)
+
+    ;; (use-package ivy-gitlab
+    ;;   :ensure t
+    ;;   :after (ivy gitlab))
+  #+END_SRC
+
+* Yasnippet
+  :PROPERTIES:
+  :ID:       8e74cc61-8f06-459b-af77-30c83beafb85
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package yasnippet
+      :ensure t
+      :init
+      (yas-global-mode 1))
+
+    (use-package yasnippet-snippets
+      :ensure t
+      :after yasnippet)
+  #+END_SRC
+
+* Python
+  :PROPERTIES:
+  :ID:       7c290139-1396-49fa-b2fd-66a46cffb590
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package elpy
+      :ensure t
+      :defer t
+      :when (member "python" emacs-configuration-tags-list)
+      :config (defvar virtualenvs-data-dir (f-expand "virtualenvs" (getenv "XDG_DATA_HOME")))
+      (when (not (f-exists? virtualenvs-data-dir))
+        (f-mkdir virtualenvs-data-dir))
+      (setq py-python-command "python3")
+      (setq python-shell-interpreter "python3")
+      (setq-default indent-tabs-mode nil)
+      (elpy-enable))
+
+
+    (use-package pipenv
+      :ensure t
+      :defer t
+      :when (member "python" emacs-configuration-tags-list)
+      :hook python-mode-hook
+      :config (progn
+                (setq pipenv-executable "~/.local/bin/pipenv")
+                (setenv "WORKON_HOME" virtualenvs-data-dir)
+                (setq pipenv-projectile-after-switch-function #'pipenv-projectile-after-switch-extended)))
+  #+END_SRC
+
+* Common Lisp
+  :PROPERTIES:
+  :ID:       082c983f-04d7-45cc-a6fb-61057c76b741
+  :END:
+  #+begin_src emacs-lisp
+    (use-package sly
+      :ensure t
+      :when (member "common-lisp" emacs-configuration-tags-list)
+      :defer t
+      :config (setq inferior-lisp-program "/usr/bin/sbcl")
+      (setq sly-contribs '(sly-fancy)))
+
+    (use-package sly-quicklisp
+      :ensure t
+      :requires sly
+      :defer t)
+
+    (use-package sly-asdf
+      :ensure t
+      :requires sly
+      :defer t)
+  #+end_src
+
+* Regex
+  :PROPERTIES:
+  :ID:       5bae40db-94b4-4215-981a-6b09fdffdb86
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package pcre2el
+      :ensure t
+      :config (pcre-mode))
+  #+END_SRC
+* Ansible
+  :PROPERTIES:
+  :ID:       fd3c309e-16ba-46f1-935e-047cca805495
+  :END:
+  #+begin_src emacs-lisp
+    (use-package yaml-mode
+      :ensure t
+      :when (or
+             (member "yaml" emacs-configuration-tags-list)
+             (member "ansible" emacs-configuration-tags-list))
+      :mode ("\\.yml|\\.yaml" . yaml-mode))
+
+    (use-package ansible
+      :ensure t
+      :when (member "ansible" emacs-configuration-tags-list)
+      :requires yaml-mode
+      ;; :after yaml-mode
+      :mode ("\\.yml|\\.yaml" . yaml-mode)
+      :config (add-hook 'yaml-mode-hook '(lambda () (ansible 1))))
+
+    ;; (add-hook 'yaml-mode-hook '(lambda () (ansible 1)))
+
+    (use-package ansible-doc
+      :requires ansible
+      ;; :after ansible
+      :ensure t)
+
+    (use-package jinja2-mode
+      :ensure t
+      :requires ansible
+      ;; :after ansible
+      :defer t
+      :mode ("\\.j2|\\.jinja2" . jinja2-mode))
+  #+end_src
+* Skeletor
+:PROPERTIES:
+:ID:       c95c4207-28f9-49c5-9873-24d9616efdc4
+:END:
+#+begin_src emacs-lisp
+  (use-package skeletor
+    :ensure t)
+#+end_src

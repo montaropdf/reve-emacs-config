@@ -1,0 +1,13 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Emacs Miscellanious configuration initialisation via org-babel
+
+* Crux
+  :PROPERTIES:
+  :ID:       b5b892e4-5910-4807-829a-ed3f15c0d119
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package crux
+      :ensure t
+      :bind (("<f6> o" . crux-open-with)
+	     ("C-a" . crux-move-beginning-of-line)))
+  #+END_SRC

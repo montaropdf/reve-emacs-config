@@ -1,0 +1,64 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Emacs Files and Systems Management configuration initialisation via org-babel
+
+* File system browsing
+  :PROPERTIES:
+  :ID:       32424e1b-a2f7-4808-a58f-5cfb525d2651
+  :END:
+ #+begin_src emacs-lisp
+   (use-package ranger
+     :ensure t)
+ #+end_src
+* Password-store
+  :PROPERTIES:
+  :ID:       16e0cbb6-b0e0-4cf6-ac0c-2dae69b1b932
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package pass
+      :ensure t
+      :config
+      (setq password-store-password-length 15))
+
+    (use-package ivy-pass
+      :ensure t
+      :after (ivy pass))
+
+    (use-package password-store
+      :ensure t
+      :after pass)
+  #+END_SRC
+
+  #+RESULTS:
+* CSV support
+  :PROPERTIES:
+  :ID:       1f6c8cb8-aa18-4403-b4c2-f079842a6552
+  :END:
+#+begin_src emacs-lisp
+  (use-package csv
+    :ensure t
+    :defer t
+    :config (add-to-list 'csv-separators ";")
+    (add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode)))
+#+end_src
+* Direnv
+  :PROPERTIES:
+  :ID:       7c6cc618-ae19-4718-bb18-9b7ff45841cf
+  :END:
+  #+begin_src emacs-lisp
+    (use-package direnv
+      :ensure t
+      :when (member "direnv" emacs-configuration-tags-list)
+      :config (direnv-mode))
+  #+end_src
+* IP Calc
+  :PROPERTIES:
+  :ID:       0de63cb8-6e36-430f-80c8-095011369bd2
+  :END:
+  #+begin_src emacs-lisp
+    (use-package ipcalc
+      :ensure t
+      :defer t)
+  #+end_src
+
+  #+RESULTS:
+

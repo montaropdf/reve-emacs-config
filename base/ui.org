@@ -1,0 +1,448 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Emacs UI configuration initialisation via org-babel
+
+* Which key package
+  :PROPERTIES:
+  :ID:       31a5aa2e-2afb-41ca-8386-2f02d4361ba0
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key
+	    :ensure t
+	    :config
+	    (which-key-mode))
+  #+END_SRC
+
+* Outshine
+  #+BEGIN_SRC emacs-lisp
+    (use-package outshine
+		 :ensure t)
+    (use-package outorg
+		 :ensure t
+		 :after (outshine org))
+    (use-package outlined-elisp-mode
+		 :ensure t
+		 :after outshine)
+
+    ;; Required for outshine
+    (add-hook 'outline-minor-mode-hook 'outshine-mode)
+
+    ;; Enables outline-minor-mode for *ALL* programming buffers
+    (add-hook 'prog-mode-hook 'outline-minor-mode)
+    (add-hook 'emacs-lisp-mode-hook 'outlined-elisp-find-file-hook)
+    (add-hook 'emacs-lisp-mode-hook 'outshine-mode)
+
+  #+END_SRC
+* Window Navigation
+  :PROPERTIES:
+  :ID:       143ec2c5-47a2-412d-8e12-11080326d58c
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package ace-window
+      :ensure t
+      :init
+      (progn
+	(global-set-key [remap other-window] 'ace-window)
+	(custom-set-faces
+	 '(aw-leading-char-face
+	   ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+	))
+  #+END_SRC
+
+  #+begin_src emacs-lisp
+    (use-package window-jump
+      :ensure t
+      :bind (("C-s-<left>" . window-jump-left)
+              ("C-s-<right>" . window-jump-right)
+              ("C-s-<up>" . window-jump-up)
+              ("C-s-<down>" . window-jump-down))
+      :config (require 'window-jump))
+  #+end_src
+
+  #+RESULTS:
+  : window-jump-down
+
+* Unicode configuration
+  :PROPERTIES:
+  :ID:       a2b85d8c-0492-42ef-9c00-cc2ed2a9cfaa
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package unicode-emoticons
+      :ensure t)
+
+    (use-package unicode-enbox
+      :ensure t)
+
+    (use-package unicode-escape
+      :ensure t)
+
+    (use-package unicode-fonts
+      :ensure t
+      :config (unicode-fonts-setup))
+
+    ;; (use-package unicode-input
+    ;;   :ensure t)
+
+    (use-package unicode-progress-reporter
+      :ensure t
+      :config (unicode-progress-reporter-setup))
+
+    (use-package unicode-whitespace
+      :ensure t
+      :config (unicode-whitespace-setup 'subdued-faces))
+
+    (use-package unidecode
+      :ensure t)
+  #+END_SRC
+
+  #+RESULTS:
+* Themes and faces
+  :PROPERTIES:
+  :ID:       95b70fa9-15f2-4e06-b680-082836647a9f
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package doom-themes
+       :ensure t)
+
+    ;; (use-package doom-modeline
+    ;;   :ensure t
+    ;;   :after 'all-the-icons)
+    ;; (use-package spaceline
+    ;;   :ensure t)
+
+    (use-package all-the-icons-dired
+      :ensure t
+      :after (dired all-the-icons)
+      ;; :init (add-hook 'dired-mode-hook 'font-lock-mode -1 )
+      :hook (dired-mode-hook))
+
+    (use-package all-the-icons-ivy
+      :ensure t
+      :after (ivy all-the-icons)
+      :config (all-the-icons-ivy-setup))
+
+    ;;doom-vibrant doom-one doom-opera doom-spacegrey doom-peacock doom-sourcerer
+    ;; (load-theme #'wombat t)
+    ;; (load-theme #'nord t)
+    (load-theme #'doom-nord t)
+    ;; (doom-modeline-mode t)
+  #+END_SRC
+
+  #+RESULTS:
+  : t
+
+* Swiper
+  :PROPERTIES:
+  :ID:       73c2041a-6c89-43a0-8311-650e80e87b43
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package counsel
+      :ensure t
+      :bind
+      (("M-y" . counsel-yank-pop)
+       :map ivy-minibuffer-map
+       ("M-y" . ivy-next-line)))
+
+    (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind (("C-x b" . ivy-switch-buffer))
+      :config
+      (progn
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-count-format "%d/%d ")
+        (setq ivy-display-style 'fancy)
+        (setq ivy-height 20))
+      )
+
+    (use-package swiper
+      :ensure t
+      :bind (("C-s" . swiper)
+             ("C-r" . swiper)
+             ("C-c C-r" . ivy-resume)
+             ("M-x" . counsel-M-x)
+             ("C-x C-f" . counsel-find-file))
+      :config
+      (progn
+        (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+        ))
+  #+END_SRC
+* Auto Complete
+  :PROPERTIES:
+  :ID:       9649a96b-c1fc-480f-96bf-978c5d434e17
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package company
+      :ensure t
+      :config
+      (add-hook 'after-init-hook 'global-company-mode))
+  #+END_SRC
+* Undo Tree
+  :PROPERTIES:
+  :ID:       50d0bb3a-a98e-4ec1-9546-45f1949adf45
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package undo-tree
+      :ensure t)
+
+    (global-undo-tree-mode)
+  #+END_SRC
+
+* IBuffer
+  :PROPERTIES:
+  :ID:       cf0f5324-4a74-4eef-8658-ff59cb27af0f
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "C-x C-b") 'ibuffer)
+    (setq ibuffer-saved-filter-groups
+          (quote (("default"
+                   ("dired" (mode . dired-mode))
+                   ("org" (and (not (name . "^init.emacs.org$"))
+                               (or
+                                (name . "^.*org$")
+                                (name . "^.*org<.+$")
+                                (name . "\\*Org Agenda.*\\*$"))))
+                   ("IRC" (or (mode . circe-channel-mode) (mode . circe-server-mode)))
+                   ;; ("web" (or (mode . web-mode) (mode . js2-mode)))
+                   ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+                   ("mu4e" (or
+                            (mode . mu4e-compose-mode)
+                            (name . "\\*mu4e\\*")
+                            ))
+                   ("programming" (or
+                                   (mode . python-mode)
+                                   (mode . emacs-lisp)
+                                   (name . "init.emacs.org")
+                                   (name . "^.*el")
+                                   (name . "^.*lisp")
+                                   (name . "config")
+                                   (name . "^.*conf")))
+                   ("emacs" (or
+                             (name . "^\\*scratch\\*$")
+                             (name . "^\\*Messages\\*$")))))))
+    (add-hook 'ibuffer-mode-hook
+              (lambda ()
+                (ibuffer-auto-mode 1)
+                (ibuffer-switch-to-saved-filter-groups "default")))
+
+    ;; Don't show filter groups if there are no buffers in that group
+    (setq ibuffer-show-empty-filter-groups nil)
+  #+END_SRC
+
+  #+RESULTS:
+* Flycheck
+  :PROPERTIES:
+  :ID:       9c74c380-f706-4ca4-8811-11075429df10
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck
+      :ensure t
+      :init
+      (global-flycheck-mode t))
+
+  #+END_SRC
+* Flyspell
+  :PROPERTIES:
+  :ID:       17f07ae8-d7c8-44e8-8462-56c7522d337a
+  :END:
+  #+begin_src emacs-lisp
+    (setq ispell-program-name "hunspell")
+    (setq ispell-local-dictionary "en_GB")
+    (setq ispell-local-dictionary-alist
+          '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  #+end_src
+
+* Treemacs
+  :PROPERTIES:
+  :ID:       a4af25b9-bbde-45cd-a0ba-c9f04b8a43f9
+  :END:
+#+BEGIN_SRC emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :defer t
+    :config
+    (progn
+
+      (setq treemacs-follow-after-init          t
+            treemacs-width                      35
+            treemacs-indentation                2
+            treemacs-git-integration            t
+            treemacs-collapse-dirs              3
+            treemacs-silent-refresh             nil
+            treemacs-change-root-without-asking nil
+            treemacs-sorting                    'alphabetic-desc
+            treemacs-show-hidden-files          t
+            treemacs-never-persist              nil
+            treemacs-is-never-other-window      nil
+            treemacs-goto-tag-strategy          'refetch-index)
+
+      (treemacs-follow-mode t)
+      (treemacs-filewatch-mode t))
+    :bind
+    (:map global-map
+          ([f9]        . treemacs)
+          ("<M-f9>"        . treemacs-projectile)
+          ("M-0"       . treemacs-select-window)
+          ("C-c 1"     . treemacs-delete-other-windows)
+          ))
+    (use-package treemacs-projectile
+      :defer t
+      :ensure t
+      :config
+      (setq treemacs-header-function #'treemacs-projectile-create-header)
+  )
+
+#+END_SRC
+
+#+RESULTS:
+
+* Hydra
+  :PROPERTIES:
+  :ID:       1233cf97-343e-4dd9-b4c9-9d1491734768
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package hydra
+      :ensure hydra)
+
+    (use-package pretty-hydra
+      :ensure t)
+
+    (global-set-key
+     (kbd "C-x t")
+     (defhydra toggle (:color blue)
+       "toggle"
+       ("a" abbrev-mode "abbrev")
+       ("s" flyspell-mode "flyspell")
+       ("d" toggle-debug-on-error "debug")
+       ("c" fci-mode "fCi")
+       ("f" auto-fill-mode "fill")
+       ("t" toggle-truncate-lines "truncate")
+       ("w" whitespace-mode "whitespace")
+       ("q" nil "cancel")))
+
+    ;; (global-set-key
+    ;;  (kbd "C-x j")
+    ;;  (defhydra gotoline
+    ;;    ( :pre (linum-mode 1)
+    ;;           :post (linum-mode -1))
+    ;;    "goto"
+    ;;    ("t" (lambda () (interactive)(move-to-window-line-top-bottom 0)) "top")
+    ;;    ("b" (lambda () (interactive)(move-to-window-line-top-bottom -1)) "bottom")
+    ;;    ("m" (lambda () (interactive)(move-to-window-line-top-bottom)) "middle")
+    ;;    ("e" (lambda () (interactive)(end-of-buffer)) "end")
+    ;;    ("c" recenter-top-bottom "recenter")
+    ;;    ("n" next-line "down")
+    ;;    ("p" (lambda () (interactive) (forward-line -1))  "up")
+    ;;    ("g" goto-line "goto-line")))
+
+    (global-set-key
+     (kbd "C-c t")
+     (defhydra hydra-global-org (:color blue)
+       "Org"
+       ("t" org-timer-start "Start Timer")
+       ("s" org-timer-stop "Stop Timer")
+       ("r" org-timer-set-timer "Set Timer") ; This one requires you be in an orgmode doc, as it sets the timer for the header
+       ("p" org-timer "Print Timer") ; output timer value to buffer
+       ("w" (org-clock-in '(4)) "Clock-In") ; used with (org-clock-persistence-insinuate) (setq org-clock-persist t)
+       ("o" org-clock-out "Clock-Out") ; you might also want (setq org-log-note-clock-out t)
+       ("j" org-clock-goto "Clock Goto") ; global visit the clocked task
+       ("c" org-capture "Capture") ; Don't forget to define the captures you want http://orgmode.org/manual/Capture.html
+       ("l" (or )rg-capture-goto-last-stored "Last Capture")))
+
+    ;; (defhydra multiple-cursors-hydra (:hint nil)
+    ;;   "
+    ;; 	 ^Up^            ^Down^        ^Other^
+    ;;     ----------------------------------------------
+    ;;     [_p_]   Next    [_n_]   Next    [_l_] Edit lines
+    ;;     [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+    ;;     [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
+    ;;     ^ ^             ^ ^             [_q_] Quit
+    ;;     "
+    ;;   ("l" mc/edit-lines :exit t)
+    ;;   ("a" mc/mark-all-like-this :exit t)
+    ;;   ("n" mc/mark-next-like-this)
+    ;;   ("N" mc/skip-to-next-like-this)
+    ;;   ("M-n" mc/unmark-next-like-this)
+    ;;   ("p" mc/mark-previous-like-this)
+    ;;   ("P" mc/skip-to-previous-like-this)
+    ;;   ("M-p" mc/unmark-previous-like-this)
+    ;;   ("r" mc/mark-all-in-region-regexp :exit t)
+    ;;   ("q" nil)
+
+    ;;   ("<mouse-1>" mc/add-cursor-on-click)
+    ;;   ("<down-mouse-1>" ignore)
+    ;;   ("<drag-mouse-1>" ignore))
+
+  #+END_SRC
+* Various packages
+  :PROPERTIES:
+  :ID:       ef8328fc-f20e-454e-8925-4bd6e7b18469
+  :END:
+  #+BEGIN_SRC emacs-lisp
+    (use-package s
+      :ensure t)
+
+    (use-package beacon
+      :ensure t
+      :config (beacon-mode 1))
+
+    (use-package hungry-delete
+      :ensure t
+      :config (global-hungry-delete-mode))
+
+    (use-package aggressive-indent
+      :ensure t
+      :config (global-aggressive-indent-mode 1))
+
+    (use-package expand-region
+      :ensure t
+      :bind ("C-=" . er/expand-region))
+
+    (use-package iedit
+      :ensure t)
+
+    (use-package rainbow-delimiters
+      :ensure t
+      :hook (prog-mode . rainbow-delimiters-mode))
+
+    ;; Copied from this location:
+    ;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+    (defun narrow-or-widen-dwim (p)
+      "Widen if buffer is narrowed, narrow-dwim otherwise.
+    Dwim means: region, org-src-block, org-subtree, or
+    defun, whichever applies first. Narrowing to
+    org-src-block actually calls `org-edit-src-code'.
+
+    With prefix P, don't widen, just narrow even if buffer
+    is already narrowed."
+      (interactive "P")
+      (declare (interactive-only))
+      (cond ((and (buffer-narrowed-p) (not p)) (widen))
+            ((region-active-p)
+             (narrow-to-region (region-beginning)
+                               (region-end)))
+            ((derived-mode-p 'org-mode)
+             ;; `org-edit-src-code' is not a real narrowing
+             ;; command. Remove this first conditional if
+             ;; you don't want it.
+             (cond ((ignore-errors (org-edit-src-code) t)
+                    (delete-other-windows))
+                   ((ignore-errors (org-narrow-to-block) t))
+                   (t (org-narrow-to-subtree))))
+            ((derived-mode-p 'latex-mode)
+             (LaTeX-narrow-to-environment))
+            (t (narrow-to-defun))))
+
+    ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
+    ;; This line actually replaces Emacs' entire narrowing
+    ;; keymap, that's how much I like this command. Only
+    ;; copy it if that's what you want.
+    (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+    (add-hook 'LaTeX-mode-hook
+              (lambda ()
+                (define-key LaTeX-mode-map "\C-xn"
+                  nil)))
+  #+END_SRC

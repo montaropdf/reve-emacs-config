@@ -1,0 +1,33 @@
+# -*- eval: (git-auto-commit-mode 1) -*-
+#+TITLE: Emacs documentation readers initialisation via org-babel
+
+** PDF tools
+   :PROPERTIES:
+   :ID:       d416152f-e988-44fc-afa2-e2fa9f084fd9
+   :END:
+
+*IMPORTANT*: on CentOS 8 I had to install =poppler-devel= and =poppler-glib-devel= using the following command:
+#+begin_src shell
+  sudo dnf --enablerepo=PowerTools install poppler-devel poppler-glib-devel
+#+end_src
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package pdf-tools
+     :ensure t)
+
+   (pdf-loader-install)
+
+   (require 'pdf-tools)
+   (use-package org-pdftools
+     :ensure t)
+   (require 'org-pdftools)
+ #+END_SRC
+** EPub reader
+   :PROPERTIES:
+   :ID:       c9ed21bb-6295-4a51-b026-e0c5ea4ffad2
+   :END:
+   #+BEGIN_SRC emacs-lisp
+     (use-package nov
+       :ensure t
+       :mode (("\\.epub$" . nov-mode)))
+   #+END_SRC

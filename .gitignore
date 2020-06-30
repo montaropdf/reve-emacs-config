@@ -1,1 +1,3 @@
 *~
+base/*.el
+!base/.revecloud-env.el
