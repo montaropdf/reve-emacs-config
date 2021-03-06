@@ -1,1 +1,5 @@
 #+TITLE: My personal configuration for the Emacs editor
+
+I have moved my emacs configuration to https://github.com/montaropdf/dotfiles.git.
+
+This repository will not be updated anymore.
